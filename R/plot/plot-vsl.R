@@ -107,7 +107,8 @@ ggsave(here::here("fig/vsl-income-block.pdf"), width = 5, height = 5, dpi = 1200
 ## Table of marginal value of each intervention ----
 # Using dplyr 1.0.0
 
-df %>% filter(Country %in% cc) %>%
+df %>% filter(Country %in% c("Japan", "United Kingdom", "United States", "Brazil",
+                             "Indonesia", "South Africa", "Bangladesh", "Nigeria")) %>%
   dplyr::mutate(marginal_value_gdp = (marginal_value/gdp)*100) %>%
   dplyr::select(Country, strategy, marginal_value_gdp) %>%
   tidyr::pivot_wider(names_from = Country, values_from = marginal_value_gdp) %>%
@@ -120,3 +121,14 @@ df %>% filter(Country %in% cc) %>%
   kableExtra::add_header_above(c(" " = 1, "Upper Income" = 3, "Upper-Middle Income" = 2, "Lower-Middle Income" =3)) %>%
   cat(., file = here::here("tab/marginal-value-gdp.tex"))
 
+
+
+# Get values for policy brief ----
+
+df %>% filter(Country %in% c("United States", "Germany", "Nigeria", "Pakistan",
+                             "Bangladesh", "India")) %>%
+  filter(R0 == 3) %>%
+  filter(strategy == "Social distancing") %>%
+  mutate(marginal_value_gdp = marginal_value / gdp) %>%
+  select(Country, marginal_value, gdp, marginal_value_gdp, Country, strategy) %>%
+  kableExtra::kable()

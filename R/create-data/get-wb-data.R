@@ -11,7 +11,8 @@ indicators <- c("NY.GDP.MKTP.CD",
                 "SL.EMP.SELF.ZS",    # Self-employed, total (% of total employment) (modeled ILO estimate)
                 "SL.EMP.VULN.ZS",    # Vulnerable Employment, Total (% Of Total Employment) (Modeled ILO Estimate)
                 "GC.TAX.TOTL.GD.ZS", # Tax revenue, % GDP 
-                "GC.TAX.YPKG.ZS")    # Take on income, % total taxes
+                "GC.TAX.YPKG.ZS",    # Take on income, % total taxes
+                "SP.DYN.LE00.IN")    # Life expectancy at birth
 
 wb_data <- purrr::map_dfr(indicators,
                           .f = function(x) wbstats::wb(country = "countries_only", 
@@ -27,13 +28,24 @@ wb_data <- purrr::map_dfr(indicators,
          self_employment = SL.EMP.SELF.ZS,
          vulnerable_employment = SL.EMP.VULN.ZS,
          tax_gdp = GC.TAX.TOTL.GD.ZS,
-         tax_inc = GC.TAX.YPKG.ZS) %>%
+         tax_inc = GC.TAX.YPKG.ZS,
+         life_expectancy = SP.DYN.LE00.IN) %>%
   # Income classification: https://blogs.worldbank.org/opendata/new-country-classifications-income-level-2019-2020
   mutate(income_block = case_when(gni_cap < 1026 ~ "Low income",
                                   between(gni_cap, 1026, 3995) ~ "Lower-middle income",
                                   between(gni_cap, 3996, 12375) ~ "Upper-middle income",
                                   gni_cap > 12375 ~ "Upper income"))
 
+
+
+
+
+#calorie_deficit <- readr::read_csv(here::here("data/raw-data/SN_ITK_DFCT.csv")) %>%
+ # janitor::clean_names() %>%
+  #dplyr::select(country_code, x2016) %>%
+  #rename(calorie_deficit = x2016)
+
 # Save the data ----
-readr::write_csv(wb_data, path = here::here("data/wb_data.csv"))
+readr::write_csv(dplyr::left_join(wb_data, readRDS(here::here("data/fies.RDS")), by = c("iso3c" = "country_code")),
+                 path = here::here("data/wb_data.csv"))
 

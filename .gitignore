@@ -4,6 +4,15 @@
 .RData
 .Ruserdata
 .pdf
-.tex
 .html
+.gz
+.xml
+.out
+.log
+.fls
+.fdb_latexmk
+.blg
+.bcf
+.bbl
+.aux
 packrat/lib*/

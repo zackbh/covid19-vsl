@@ -43,6 +43,12 @@ unmitigated <- furrr::future_map_dbl(.x = countries, .f = function(x) calc_death
 
 outcomes <- tibble::tibble(countries, unmitigated)
 
+saveRDS(outcomes, file = here::here("data/squire/unmitigated.RDS"))
+
+social_distancing <- 1- c(0.4481994, 0.4220294, 0.4482054, 0.4468343,
+						  0.4260916, 0.4486710, 0.4481856, 0.4491362,
+						  0.4467822, 0.4384045)
+
 storage <- vector(mode = "list", length = length(countries))
 
 for (i in seq_along(countries)){

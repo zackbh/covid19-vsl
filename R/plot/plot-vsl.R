@@ -10,6 +10,7 @@ options(knitr.kable.NA = "--")
 df <- readRDS(here::here("data/combined-data.RDS")) %>%
   filter(R0 == 3)
 
+cc <- c("United States", "Japan", "Nigeria", "Pakistan", "Bangladesh")
 
 c1 <- c("United States", "Japan", "Brazil",
         "India", "Bangladesh")
@@ -21,7 +22,6 @@ c2 <- c("United States", "South Africa", "Nigeria",
 # VSL in levels ----
 ###############################################################################
 
-cc <- c("United States", "Japan", "Nigeria", "Pakistan", "Bangladesh")
 
 df %>% filter(Country %in% cc) %>%
   ggplot(., aes(x = strategy, y = value_deaths/1e9, color = Country, group = Country, label = Country)) +
@@ -38,6 +38,8 @@ df %>% filter(Country %in% cc) %>%
   theme(legend.position = "none", axis.title.x = element_blank())
 
 ggsave(here::here("fig/vsl-levels.pdf"), width = 5, height = 5, dpi = 1200)
+ggplot2::ggsave(filename = here::here("fig/vsl-levels.png"),
+                height = 5.625, width = 10, dpi = 900)
 
 ###############################################################################
 # As fraction of GDP ----
@@ -72,21 +74,26 @@ vsl_gdp_b <- df %>% filter(Country %in% c2) %>%
 
 
 ggsave(filename =  here::here("fig/vsl-gdp-a.pdf"),  plot = vsl_gdp_a, width = 4.5, height = 4.5,)
+ggplot2::ggsave(filename = here::here("fig/vsl-gdp-a.png"), plot = vsl_gdp_a,
+                height = 5.625, width = 10, dpi = 900)
+
+
 
 ggsave(filename = here::here("fig/vsl-gdp-b.pdf"), plot = vsl_gdp_b, width = 4.5, height = 4.5)
-
+ggplot2::ggsave(filename = here::here("fig/vsl-gdp-b.png"), plot = vsl_gdp_b,
+                height = 5.625, width = 10, dpi = 900)
 
 # VSL by income bloc ---
 
 # Plot VSL ----
 
 
-income_bloc <- df %>% filter(!is.na(income_block)) %>%
-  group_by(strategy, income_block) %>%
-  summarize(avg_vsl = weighted.mean(vsl, w = total_pop, na.rm = T),
-            total_deaths = sum(total_deaths),
-            total_gdp = sum(gdp),
-            avg_losses = (avg_vsl*total_deaths*1000000)/total_gdp)
+income_bloc <- out %>% filter(!is.na(income_block)) %>%
+  group_by(income_block, strategy) %>%
+  summarize(avg_vsl = weighted.mean(vsl, w = pop, na.rm = T),
+            deaths = sum(deaths),
+            gdp = sum(gdp),
+            avg_losses = (avg_vsl*deaths*1e6)/gdp)
 
 
 ggplot(income_bloc, aes(x = strategy, y = avg_losses, color = income_block, group = income_block, label = income_block)) +

@@ -45,7 +45,9 @@ wb_data <- purrr::map_dfr(indicators,
   #dplyr::select(country_code, x2016) %>%
   #rename(calorie_deficit = x2016)
 
+readr::write_csv(wb_data, path = here::here("data/wb-data.csv"))
+
 # Save the data ----
-readr::write_csv(dplyr::left_join(wb_data, readRDS(here::here("data/fies.RDS")), by = c("iso3c" = "country_code")),
-                 path = here::here("data/wb_data.csv"))
+#readr::write_csv(dplyr::left_join(wb_data, readRDS(here::here("data/fies.RDS")), by = c("iso3c" = "country_code")),
+ #                path = here::here("data/wb_data.csv"))
 

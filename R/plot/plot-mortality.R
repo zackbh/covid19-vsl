@@ -78,6 +78,9 @@ ggplot(., aes(x = strategy, y = total_deaths/total_pop, color = Country, group =
 
 ggplot2::ggsave(filename = here::here("fig/mortality_risk.pdf"),
                 plot = mortality_risk, height = 5, width = 5, dpi = 1200)
+ggplot2::ggsave(filename = here::here("fig/mortality_risk.png"),
+                plot = mortality_risk, height = 5.625, width = 10, dpi = 900)
+
 
 ## Levels in a table
 df %>% filter(Country %in% cc) %>% 
@@ -107,7 +110,10 @@ ggplot(inc_block, aes(x = strategy, y = percent_mortality, color = income_block,
   theme(legend.position = "none", axis.title.x = element_blank())
 
 ggplot2::ggsave(here::here("fig/deaths-inc-bloc.pdf"), height = 5, width = 5, dpi = 1200)
-  
+
+ggplot2::ggsave(filename = here::here("fig/deaths-inc-bloc.png"),
+                height = 5.625, width = 10, dpi = 900)
+
 
 
 

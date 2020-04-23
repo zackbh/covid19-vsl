@@ -36,9 +36,17 @@ mortality <- bind_rows(mitigation, suppression) %>%
   filter(!is.na(country_code))
 
 
+# Create data for estimating trigger timing with Squire -----
+mortality %>% filter(R0 == 3) %>% filter(strategy %in% c("Late suppression", "Early suppression")) %>%
+  rename(deaths_threshold = "Deaths per week at trigger", country = Country) %>%
+  mutate(deaths_threshold = as.numeric(deaths_threshold)) %>%
+  select(country, strategy, deaths_threshold) %>%
+  saveRDS(., file = here::here("data/suppression-triggers.RDS"))
+##################################################################
+
 df <- left_join(mortality, readr::read_csv(here::here("data/vsl.csv")),
                 by = "country_code") %>%
-  left_join(., readr::read_csv(here::here("data/wb_data.csv")), by = c("country_code" = "iso3c")) %>%
+  left_join(., readr::read_csv(here::here("data/wb-data.csv")), by = c("country_code" = "iso3c")) %>%
   left_join(., readRDS(file = here::here("data/oecd-countries.RDS")), by = c("country_code" = "oecd_code")) %>%
   mutate(broad_region = case_when(region %in% c("Eastern Africa", "Middle Africa",
                                                 "Southern Africa", "Western Africa") ~ "Sub-Saharan Africa",
@@ -108,7 +116,12 @@ df <- left_join(df, readRDS(here::here("data/google-mobility.RDS")),
 saveRDS(df, here::here("data/combined-data.RDS"))
 
 
-
-
+######
+#readRDS(here::here("data/combined-data.RDS")) %>%
+ # filter(Country %in% useful_countries) %>%
+  #filter(R0 == 3) %>%
+#  filter(strategy %in% c("Unmitigated", "Social distancing", "Late suppression")) %>%
+ # select(Country, strategy, Social_distance, total_pop, total_deaths, vsl, gdp) %>%
+#  saveRDS(., here::here("data/squire-data.RDS"))
 
 

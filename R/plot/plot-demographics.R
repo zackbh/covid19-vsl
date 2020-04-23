@@ -22,7 +22,7 @@ df %>% filter(!is.na(vulnerable_employment)) %>%
   geom_histogram(bins = 35, aes(color = after_scale(prismatic::clr_darken(fill, .45)))) +
   facet_wrap(~income_block, ncol = 1) +
   scale_x_continuous(labels = scales::percent_format()) +
-  scale_y_continuous(position = "right") +
+  scale_y_continuous(position = "left") +
   scale_fill_hue() +
   labs(title = "",
        y = "Number of countries", x = "Percent workforce self- or informally-employed") +
@@ -30,6 +30,9 @@ df %>% filter(!is.na(vulnerable_employment)) %>%
   theme(legend.position = "none")
 
 ggsave(here::here("fig/vulnerable-employment.pdf"), width = 5, height = 5, dpi = 1200)
+ggsave(here::here("fig/vulnerable-employment.png"),width=14.11, height=14.11, units="cm",dpi=600)
+
+
 
 ###############################################################################
 # Age distribution by income block ----
@@ -50,6 +53,8 @@ df %>% filter(!is.na(income_block)) %>%
   theme(legend.position = "none")
 
 ggsave(here::here("fig/age-dist.pdf"), width = 5, height = 5, dpi = 1200)
+ggsave(here::here("fig/age-dist.png"),width=14.11, height=14.11, units="cm",dpi=600)
+
 
 df %>% group_by(income_block) %>%
   summarize(avg_perc_old = weighted.mean(SP.POP.65UP.TO.ZS/100, total_pop))

@@ -90,6 +90,7 @@ ssa <- filter(df, broad_region == "Sub-Saharan Africa") %>%
             gdp = weighted.mean(gdp, w = total_pop),
             gni = weighted.mean(gni, w = total_pop),
             vsl = weighted.mean(vsl, w = total_pop),
+            SP.POP.65UP.TO.ZS = weighted.mean(SP.POP.65UP.TO.ZS, w = total_pop, na.rm = T),
             total_deaths = sum(total_deaths),
             total_pop = sum(total_pop),
             value_deaths = vsl * total_deaths * 1000000
@@ -101,7 +102,7 @@ lac <- filter(df, broad_region == "LAC") %>%
             region = "LAC",
             gdp = weighted.mean(gdp, w = total_pop),
             gni = weighted.mean(gni, w = total_pop),
-            vsl = weighted.mean(vsl, w = total_pop),
+            vsl = weighted.mean(vsl, w = total_pop, na.rm = T),
             total_deaths = sum(total_deaths),
             total_pop = sum(total_pop),
             value_deaths = vsl * total_deaths * 1000000

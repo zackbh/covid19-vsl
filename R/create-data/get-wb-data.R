@@ -12,7 +12,10 @@ indicators <- c("NY.GDP.MKTP.CD",
                 "SL.EMP.VULN.ZS",    # Vulnerable Employment, Total (% Of Total Employment) (Modeled ILO Estimate)
                 "GC.TAX.TOTL.GD.ZS", # Tax revenue, % GDP 
                 "GC.TAX.YPKG.ZS",    # Take on income, % total taxes
-                "SP.DYN.LE00.IN")    # Life expectancy at birth
+                "SP.DYN.LE00.IN",    # # Life expectancy at birth
+                "SH.MED.BEDS.ZS", # Hospital beds per 1,000 people
+                "SH.MED.PHYS.ZS" # Physiciains per 1,000 people
+                )    
 
 wb_data <- purrr::map_dfr(indicators,
                           .f = function(x) wbstats::wb(country = "countries_only", 
@@ -29,7 +32,9 @@ wb_data <- purrr::map_dfr(indicators,
          vulnerable_employment = SL.EMP.VULN.ZS,
          tax_gdp = GC.TAX.TOTL.GD.ZS,
          tax_inc = GC.TAX.YPKG.ZS,
-         life_expectancy = SP.DYN.LE00.IN) %>%
+         life_expectancy = SP.DYN.LE00.IN,
+         hospital_beds = SH.MED.BEDS.ZS,
+         doctors = SH.MED.PHYS.ZS) %>%
   # Income classification: https://blogs.worldbank.org/opendata/new-country-classifications-income-level-2019-2020
   mutate(income_block = case_when(gni_cap < 1026 ~ "Low income",
                                   between(gni_cap, 1026, 3995) ~ "Lower-middle income",

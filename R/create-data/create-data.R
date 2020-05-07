@@ -111,7 +111,7 @@ lac <- filter(df, broad_region == "LAC") %>%
 
 df <- bind_rows(df, oecd, ssa, lac)
 
-df <- left_join(df, readRDS(here::here("data/google-mobility.RDS")),
+df <- left_join(df, select(readRDS(here::here("data/google-mobility.RDS")),-country_code, -country_name),
                 by = c("country_code" = "country_code_iso3c"))
 
 saveRDS(df, here::here("data/combined-data.RDS"))

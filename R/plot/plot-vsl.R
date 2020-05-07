@@ -88,12 +88,12 @@ ggplot2::ggsave(filename = here::here("fig/vsl-gdp-b.png"), plot = vsl_gdp_b,
 # Plot VSL ----
 
 
-income_bloc <- out %>% filter(!is.na(income_block)) %>%
-  group_by(income_block, strategy) %>%
-  summarize(avg_vsl = weighted.mean(vsl, w = pop, na.rm = T),
-            deaths = sum(deaths),
-            gdp = sum(gdp),
-            avg_losses = (avg_vsl*deaths*1e6)/gdp)
+income_bloc <- df %>% filter(!is.na(income_block)) %>%
+  group_by(strategy, income_block) %>%
+  summarize(avg_vsl = weighted.mean(vsl, w = total_pop, na.rm = T),
+            total_deaths = sum(total_deaths),
+            total_gdp = sum(gdp),
+            avg_losses = (avg_vsl*total_deaths*1e6)/total_gdp)
 
 
 ggplot(income_bloc, aes(x = strategy, y = avg_losses, color = income_block, group = income_block, label = income_block)) +
@@ -108,7 +108,7 @@ ggplot(income_bloc, aes(x = strategy, y = avg_losses, color = income_block, grou
   theme(legend.position = "none", axis.title.x = element_blank())
 
 ggsave(here::here("fig/vsl-income-block.pdf"), width = 5, height = 5, dpi = 1200)
-
+ggsave(here::here("fig/vsl-income-block.png"), width = 6, height = 6, dpi = 1200)
 
 
 ## Table of marginal value of each intervention ----

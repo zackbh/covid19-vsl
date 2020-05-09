@@ -1,4 +1,5 @@
 # Get World Bank data ----
+# Uses wbstats package to pull in indicators
 
 library(wbstats)
 library(dplyr)
@@ -13,8 +14,8 @@ indicators <- c("NY.GDP.MKTP.CD",
                 "GC.TAX.TOTL.GD.ZS", # Tax revenue, % GDP 
                 "GC.TAX.YPKG.ZS",    # Take on income, % total taxes
                 "SP.DYN.LE00.IN",    # # Life expectancy at birth
-                "SH.MED.BEDS.ZS", # Hospital beds per 1,000 people
-                "SH.MED.PHYS.ZS" # Physiciains per 1,000 people
+                "SH.MED.BEDS.ZS",    # Hospital beds per 1,000 people
+                "SH.MED.PHYS.ZS"     # Physicians per 1,000 people
                 )    
 
 wb_data <- purrr::map_dfr(indicators,
@@ -41,14 +42,6 @@ wb_data <- purrr::map_dfr(indicators,
                                   between(gni_cap, 3996, 12375) ~ "Upper-middle income",
                                   gni_cap > 12375 ~ "Upper income"))
 
-
-
-
-
-#calorie_deficit <- readr::read_csv(here::here("data/raw-data/SN_ITK_DFCT.csv")) %>%
- # janitor::clean_names() %>%
-  #dplyr::select(country_code, x2016) %>%
-  #rename(calorie_deficit = x2016)
 
 readr::write_csv(wb_data, path = here::here("data/wb-data.csv"))
 

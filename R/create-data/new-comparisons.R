@@ -9,9 +9,9 @@ source(here::here("R/create-data/squire-functions/squire-functions.R"))
 
 vsl <- readr::read_csv(here::here("data/vsl.csv"))
 wb <- readr::read_csv(here::here("data/wb-data.csv"))
-df <- population %>% group_by(country) %>% summarize(pop = sum(n)) %>%
+df <- squire::population %>% group_by(country) %>% summarize(pop = sum(n)) %>% ungroup() %>%
   mutate(iso3c = countrycode::countrycode(country, origin = "country.name", destination = "wb")) %>%
-  left_join(select(vsl, country, vsl_gni_cap, vsl), by = "country") %>%
+  left_join(select(vsl, country_code, vsl_gni_cap, vsl, vsl_160, vsl_100, vsl_extrapolated), by = c("iso3c" = "country_code")) %>%
   filter(!is.na(vsl)) %>%
   left_join(select(wb, iso3c, gdp, vulnerable_employment, income_block), by = "iso3c")
 
@@ -26,14 +26,16 @@ unmitigated_outcomes <- bind_rows(mcmapply(grid_search, country = df$country, st
 
 strategy <- c("Social distancing", "Social distancing+", "Suppression")
 starting_dates <- seq.int(from = 35, to = 95, by = 5)  # Worked at 5
+duration <- seq.int(from = 30, to = 45, by = 5)
 search_parameters <- tidyr::crossing(country = df$country, strategy, starting_dates) 
 
+tictoc::tic()
 distancing_outcomes <- bind_rows(mcmapply(grid_search,
-                                country = search_parameters$country, strategy = search_parameters$strategy, mitigation_day = search_parameters$starting_dates,
+                                country = search_parameters$country, strategy = search_parameters$strategy, mitigation_day = search_parameters$starting_dates,increased_mortality_pr = 2,
                                 SIMPLIFY = FALSE, mc.cores = numCores)) %>% 
   group_by(country, strategy) %>% 
   slice(which.min(deaths))
-
+tictoc::toc()
 
 ###############################################################################
 ######### ----- Bind all outcomes together ------
@@ -43,11 +45,20 @@ out <- bind_rows(unmitigated_outcomes, distancing_outcomes) %>%
   mutate(strategy = factor(strategy, levels = c("Unmitigated", "Social distancing", "Social distancing+", "Suppression"), ordered = T)) %>%
   arrange(country, strategy) %>%
   group_by(country) %>%
-  mutate(value_deaths = deaths * vsl * 1e6,
+  mutate(value_deaths = deaths * vsl,
          rel_value = value_deaths/gdp,
          marginal_deaths = lag(deaths) - deaths,
-         marginal_value = marginal_deaths * vsl * 1e6,
+         marginal_value = marginal_deaths * vsl,
          marginal_rel_value = marginal_value/gdp)
+
+# Let's get it by age now ----
+
+
+
+aardvark <- bind_rows(mcmapply(FUN = grid_search,
+        country = out$country, strategy = out$strategy, mitigation_day = out$mitigation_day,
+        reduce_age = FALSE,
+        SIMPLIFY = FALSE, mc.cores = numCores))
 
 
 
@@ -59,6 +70,11 @@ out %>% filter(country %in% c("United States", "Japan", "United Kingdom", "Niger
   dplyr::relocate(strategy, Japan, `United Kingdom`, `United States`, Brazil, Indonesia, `South Africa`, Bangladesh)
 
 
+
+out %>% filter(country %in% c("United States", "Japan", "United Kingdom", "Nigeria", "Brazil", "Indonesia", "South Africa", "Bangladesh", "Nigeria")) %>%
+  select(country, strategy, rel_value) %>%
+  tidyr::pivot_wider(names_from = country, values_from = rel_value) %>%
+  dplyr::relocate(strategy, Japan, `United Kingdom`, `United States`, Brazil, Indonesia, `South Africa`, Bangladesh)
 
 
 cc <- c("South Africa", "Nigeria",

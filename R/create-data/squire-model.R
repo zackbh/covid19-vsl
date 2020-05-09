@@ -5,16 +5,7 @@ plan(multiprocess)
 library(dplyr)
 
 
-calc_deaths <- function(squire_output){
-  
-  output <- squire::format_output(squire_output, var_select = "deaths")
-  
-  deaths <- output %>% dplyr::group_by(replicate) %>%
-    dplyr::summarize(total_deaths = sum(y))
-  
-  return(mean(deaths$total_deaths))
-  
-}
+
 
 run_squire <- function(mitigation_day = 15, mitigation_duration = 45, mitigation_level = .5,
                        country = "Bangladesh"){

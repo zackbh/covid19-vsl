@@ -8,12 +8,14 @@ library(ggplot2)
 source(here::here("R/create-data/squire-functions/squire-functions.R"))
 
 vsl <- readr::read_csv(here::here("data/vsl.csv"))
-wb <- readr::read_csv(here::here("data/wb-data.csv"))
-df <- squire::population %>% group_by(country) %>% summarize(pop = sum(n)) %>% ungroup() %>%
+wb <- readRDS(here::here("data/wb-data.RDS"))
+life_tables <- readRDS(here::here("data/life-tables.RDS"))
+df <- squire::population %>%  # Start with Squire built-in populations
+  group_by(country) %>% summarize(pop = sum(n)) %>% ungroup() %>%
   mutate(iso3c = countrycode::countrycode(country, origin = "country.name", destination = "wb")) %>%
   left_join(select(vsl, country_code, vsl_gni_cap, vsl, vsl_160, vsl_100, vsl_extrapolated), by = c("iso3c" = "country_code")) %>%
   filter(!is.na(vsl)) %>%
-  left_join(select(wb, iso3c, gdp, vulnerable_employment, income_block), by = "iso3c")
+  left_join(select(wb, iso3c, gdp, vulnerable_employment, income_group), by = "iso3c")
 
 ###############################################################################
 # Calculate unmitigated deaths ----
@@ -24,9 +26,9 @@ unmitigated_outcomes <- bind_rows(mcmapply(grid_search, country = df$country, st
 # Find optimal timing for social distancing policies -----
 ###############################################################################
 
-strategy <- c("Social distancing", "Social distancing+", "Suppression")
+strategy <- c("Individual distancing", "Social distancing", "Social distancing+", "Suppression")
 starting_dates <- seq.int(from = 35, to = 95, by = 5)  # Worked at 5
-duration <- seq.int(from = 30, to = 45, by = 5)
+# duration <- seq.int(from = 30, to = 45, by = 5)  # Takes too long to run
 search_parameters <- tidyr::crossing(country = df$country, strategy, starting_dates) 
 
 tictoc::tic()
@@ -34,7 +36,7 @@ distancing_outcomes <- bind_rows(mcmapply(grid_search,
                                 country = search_parameters$country, strategy = search_parameters$strategy, mitigation_day = search_parameters$starting_dates,increased_mortality_pr = 2,
                                 SIMPLIFY = FALSE, mc.cores = numCores)) %>% 
   group_by(country, strategy) %>% 
-  slice(which.min(deaths))
+  slice(which.min(total_deaths))
 tictoc::toc()
 
 ###############################################################################
@@ -42,17 +44,16 @@ tictoc::toc()
 
 out <- bind_rows(unmitigated_outcomes, distancing_outcomes) %>%
   left_join(df, by = "country") %>%
-  mutate(strategy = factor(strategy, levels = c("Unmitigated", "Social distancing", "Social distancing+", "Suppression"), ordered = T)) %>%
+  mutate(strategy = factor(strategy, levels = c("Unmitigated", "Individual distancing", "Social distancing", "Social distancing+", "Suppression"), ordered = T)) %>%
   arrange(country, strategy) %>%
   group_by(country) %>%
-  mutate(value_deaths = deaths * vsl,
+  mutate(value_deaths = total_deaths * vsl,
          rel_value = value_deaths/gdp,
-         marginal_deaths = lag(deaths) - deaths,
+         marginal_deaths = lag(total_deaths) - total_deaths,
          marginal_value = marginal_deaths * vsl,
          marginal_rel_value = marginal_value/gdp)
 
 # Let's get it by age now ----
-
 
 
 aardvark <- bind_rows(mcmapply(FUN = grid_search,
@@ -60,20 +61,41 @@ aardvark <- bind_rows(mcmapply(FUN = grid_search,
         reduce_age = FALSE,
         SIMPLIFY = FALSE, mc.cores = numCores))
 
+foo <- aardvark %>%
+  mutate(country_code = countrycode::countrycode(country, origin = "country.name", destination = "wb")) %>%
+  left_join(select(life_tables, -country),
+            by = c("country_code", "age_group")) %>%
+  left_join(select(vsl, country_code, vsl_gni_cap, vsl, vsl_160, vsl_100, vsl_extrapolated), by = c("country_code")) %>%
+  filter(!is.na(vsl)) %>%
+  left_join(select(wb, iso3c, gdp, vulnerable_employment, income_group), by = c("country_code" = "iso3c")) %>%
+  mutate(vsly = vsl/life_exp_working,
+         value_years = total_deaths * life_expectancy * vsly) %>%
+  group_by(country, strategy) %>%
+  summarize(total_deaths = sum(total_deaths),
+            value_years = sum(value_years),
+            gdp = mean(gdp),
+            income_block = unique(income_group)) %>%
+  mutate(rel_value = value_years/gdp,
+         marginal_value = lag(rel_value) - rel_value,
+         marginal_deaths = lag(total_deaths) - total_deaths)
 
+
+
+
+
+
+
+
+foo %>% filter(country %in% c("United States", "Japan", "United Kingdom", "Nigeria", "Brazil", "Indonesia", "South Africa", "Bangladesh", "Nigeria")) %>%
+  select(country, strategy, marginal_deaths) %>%
+  tidyr::pivot_wider(names_from = country, values_from = marginal_deaths) %>%
+  dplyr::relocate(strategy, Japan, `United Kingdom`, `United States`, Brazil, Indonesia, `South Africa`, Bangladesh)
 
 
 
 out %>% filter(country %in% c("United States", "Japan", "United Kingdom", "Nigeria", "Brazil", "Indonesia", "South Africa", "Bangladesh", "Nigeria")) %>%
   select(country, strategy, marginal_rel_value) %>%
   tidyr::pivot_wider(names_from = country, values_from = marginal_rel_value) %>%
-  dplyr::relocate(strategy, Japan, `United Kingdom`, `United States`, Brazil, Indonesia, `South Africa`, Bangladesh)
-
-
-
-out %>% filter(country %in% c("United States", "Japan", "United Kingdom", "Nigeria", "Brazil", "Indonesia", "South Africa", "Bangladesh", "Nigeria")) %>%
-  select(country, strategy, rel_value) %>%
-  tidyr::pivot_wider(names_from = country, values_from = rel_value) %>%
   dplyr::relocate(strategy, Japan, `United Kingdom`, `United States`, Brazil, Indonesia, `South Africa`, Bangladesh)
 
 

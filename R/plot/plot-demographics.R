@@ -5,9 +5,10 @@
 library(dplyr)
 library(ggplot2)
 library(prismatic)
-df <- readRDS(here::here("data/combined-data.RDS")) %>%
-  filter(R0 == 3) %>%
-  filter(!is.na(income_block))
+df <- readRDS(here::here("data/wb-data.RDS"))
+
+df_age <- squire::population %>% left_join(df, by = c("iso3c", "country"))
+
 ###############################################################################
 
 ###############################################################################
@@ -15,12 +16,12 @@ df <- readRDS(here::here("data/combined-data.RDS")) %>%
 ###############################################################################
 
 df %>% filter(!is.na(vulnerable_employment)) %>%
-  group_by(Country) %>%
+  group_by(country) %>%
   summarize(vulnerable_employment = mean(vulnerable_employment),
-            income_block = unique(income_block)) %>%
-  ggplot(., aes(x  = vulnerable_employment/100, fill = income_block)) +
+            income_group = unique(income_group)) %>%
+  ggplot(., aes(x  = vulnerable_employment/100, fill = income_group)) +
   geom_histogram(bins = 35, aes(color = after_scale(prismatic::clr_darken(fill, .45)))) +
-  facet_wrap(~income_block, ncol = 1) +
+  facet_wrap(~income_group, ncol = 1) +
   scale_x_continuous(labels = scales::percent_format()) +
   scale_y_continuous(position = "left") +
   scale_fill_hue() +
@@ -38,14 +39,14 @@ ggsave(here::here("fig/vulnerable-employment.png"), width = 6, height = 6, dpi =
 # Age distribution by income block ----
 ###############################################################################
 
-df %>% filter(!is.na(income_block)) %>%
-  group_by(Country) %>%
+df %>% filter(!is.na(income_group)) %>%
+  group_by(country) %>%
   summarize(SP.POP.65UP.TO.ZS = mean(SP.POP.65UP.TO.ZS),
-            income_block = unique(income_block))  %>%
-  ggplot(., aes(x = SP.POP.65UP.TO.ZS/100, fill = income_block)) +
+            income_group = unique(income_group))  %>%
+  ggplot(., aes(x = SP.POP.65UP.TO.ZS/100, fill = income_group)) +
   scale_fill_hue() +
   geom_histogram(bins = 30, aes(color = after_scale(prismatic::clr_darken(fill, .45)))) +
-  facet_wrap(~income_block, ncol = 1) +
+  facet_wrap(~income_group, ncol = 1) +
   scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_y_continuous(position = "left") +
   labs(y = "Number of countries", x = "Percent population over the age 65") +
@@ -56,8 +57,30 @@ ggsave(here::here("fig/age-dist.pdf"), width = 5, height = 5, dpi = 1200)
 ggsave(here::here("fig/age-dist.png"), width = 6, height = 6, dpi = 1200)
 
 
-df %>% group_by(income_block) %>%
+# Squire population pyramids ----
+
+df_age %>% 
+  filter(!is.na(income_group)) %>%
+  mutate(over60 = ifelse(age_group %in% c("60-64", "65-69", "70-74", "75-79", "80+"), TRUE,FALSE)) %>%
+  group_by(country) %>% mutate(total_pop = sum(n)) %>% ungroup() %>%
+  mutate(frac_pop = n/total_pop) %>%
+  ggplot(., aes(x = age_group, y = frac_pop, color = over60)) +
+  geom_point(alpha = .7) +
+  stat_smooth(aes(group = income_group), se = F, color = "black") +
+  facet_wrap(~income_group) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_color_viridis_d() +
+  labs(x = "Age Group", y = "Percent of Country's Population") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+
+df %>% group_by(income_group) %>%
   summarize(avg_perc_old = weighted.mean(SP.POP.65UP.TO.ZS/100, total_pop))
+
+
+
+
 
 
 # Mobility data ----

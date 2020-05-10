@@ -54,4 +54,12 @@ read_lifetables <- function(filename){
 
 df <- purrr::map_dfr(.x = files, .f = read_lifetables)
 
+working_life_exp <- df %>% filter(age_group %in% c("20-24", "25-29", "30-34", "35-39",
+                               "40-44", "45-49", "50-54", "55-59",
+                               "60-64")) %>%
+  group_by(country_code) %>%
+  summarize(life_exp_working = mean(life_expectancy))
+
+df <- left_join(df, working_life_exp, by = "country_code")
+
 saveRDS(df, file = here::here("data/life-tables.RDS"))

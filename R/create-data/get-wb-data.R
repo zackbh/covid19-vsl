@@ -7,7 +7,6 @@ library(dplyr)
 indicators <- c("NY.GDP.MKTP.CD",
                 "NY.GNP.MKTP.CD",
                 "NY.GNP.PCAP.CD",
-                "NY.ADJ.NNTY.PC.CD", # Adjusted net national income per capita (current US$)
                 "SP.POP.65UP.TO.ZS", # Population ages 65 and above (% of total population)
                 "SL.EMP.SELF.ZS",    # Self-employed, total (% of total employment) (modeled ILO estimate)
                 "SL.EMP.VULN.ZS",    # Vulnerable Employment, Total (% Of Total Employment) (Modeled ILO Estimate)
@@ -28,7 +27,6 @@ wb_data <- purrr::map_dfr(indicators,
   rename(gdp = NY.GDP.MKTP.CD,
          gni = NY.GNP.MKTP.CD,
          gni_cap = NY.GNP.PCAP.CD,
-         income = NY.ADJ.NNTY.PC.CD,
          self_employment = SL.EMP.SELF.ZS,
          vulnerable_employment = SL.EMP.VULN.ZS,
          tax_gdp = GC.TAX.TOTL.GD.ZS,
@@ -37,15 +35,26 @@ wb_data <- purrr::map_dfr(indicators,
          hospital_beds = SH.MED.BEDS.ZS,
          doctors = SH.MED.PHYS.ZS) %>%
   # Income classification: https://blogs.worldbank.org/opendata/new-country-classifications-income-level-2019-2020
-  mutate(income_block = case_when(gni_cap < 1026 ~ "Low income",
+  mutate(income_group_handcoded = case_when(gni_cap < 1026 ~ "Low income",
                                   between(gni_cap, 1026, 3995) ~ "Lower-middle income",
                                   between(gni_cap, 3996, 12375) ~ "Upper-middle income",
                                   gni_cap > 12375 ~ "Upper income"))
 
 
-readr::write_csv(wb_data, path = here::here("data/wb-data.csv"))
+income_group <- readxl::read_excel(here::here("data/raw-data/CLASS.xls"),
+                                   range = "C7:F224",
+                                   col_names = c("country", "country_code",
+                                                 "region", "income_group"),
+                                   col_types = rep("text", 4))
 
-# Save the data ----
-#readr::write_csv(dplyr::left_join(wb_data, readRDS(here::here("data/fies.RDS")), by = c("iso3c" = "country_code")),
- #                path = here::here("data/wb_data.csv"))
+df <- left_join(wb_data, income_group, by = c("iso3c" = "country_code")) %>%
+  relocate(iso3c, country, region, income_group) %>%
+  mutate(income_group = factor(income_group, levels = c("High income", "Upper middle income",
+                                                        "Lower middle income", "Low income"),
+                               ordered = T))
+
+
+saveRDS(df, here::here("data/wb-data.RDS"))
+
+
 

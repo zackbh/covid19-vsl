@@ -5,9 +5,25 @@
 library(dplyr)
 library(ggplot2)
 library(prismatic)
-df <- readRDS(here::here("data/wb-data.RDS"))
 
-df_age <- squire::population %>% left_join(df, by = c("iso3c", "country"))
+df <- readRDS(here::here("data/wb-data.RDS"))
+df_age <- squire::population %>% 
+  left_join(df, by = c("iso3c", "country")) %>%
+  left_join(select(readRDS(here::here("data/life-tables.RDS")), -country),
+            by = c("iso3c" = "country_code", "age_group")) %>%
+  mutate(age_group = forcats::as_factor(age_group),
+         age_group_lumped = forcats::fct_collapse(age_group,
+                                                  "0-9" = c("0-4", "5-9"),
+                                                  "10-19" = c("10-14", "15-19"),
+                                                  "20-29" = c("20-24", "25-29"),
+                                                  "30-39" = c("30-34", "35-39"),
+                                                  "40-49" = c("40-44", "45-49"),
+                                                  "50-59" = c("50-54", "55-59"),
+                                                  "60-69" = c("60-64", "65-69"),
+                                                  "70-79" = c("70-74", "75-79"),
+                                                  "80+" = c("80+"))) %>%
+  group_by(iso3c) %>% mutate(pop = sum(n)) %>% ungroup()
+
 
 ###############################################################################
 
@@ -61,22 +77,119 @@ ggsave(here::here("fig/age-dist.png"), width = 6, height = 6, dpi = 1200)
 
 df_age %>% 
   filter(!is.na(income_group)) %>%
+  filter(income_group %in% c("High income", "Low income")) %>%
+  group_by(country) %>% mutate(total_pop = sum(n)) %>% ungroup() %>%
+  mutate(frac_pop = n/total_pop) %>%
+  ggplot(., aes(x = age_group, y = frac_pop, color = income_group)) +
+  geom_point(alpha = .3, shape = 19) +
+  stat_smooth(aes(group = income_group), se = F) +
+  #geom_label(aes(x="30-44", y=.03, label="Low income countries", color="Low income"), show.legend=F) +
+  #geom_label(aes(x="30-44", y=.1, label="High income countries", color="High income"), show.legend=F) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(breaks = levels(df_age$age_group)[c(TRUE, FALSE)], guide = guide_axis(n.dodge = 1)) +
+  scale_color_hue() +
+  labs(x = "Age Group", y = "Percent of Population") +
+  theme_minimal() +
+  theme(legend.position = c(.8,.6), legend.title = element_blank())
+
+ggplot2::ggsave(here::here("fig/population-distribution-hilow.pdf"),
+                device = "pdf", width = 8, height = 8)
+
+df_age %>%
+  filter(!is.na(income_group)) %>%
+  group_by(country) %>% mutate(total_pop = sum(n)) %>% ungroup() %>%
+  mutate(frac_pop = n/total_pop) %>%
+ggplot(., aes(x = age_group, y = frac_pop, color = income_group)) +
+  geom_point(alpha = .3, shape = 19) +
+  stat_smooth(aes(group = income_group), se = F) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  scale_color_hue() +
+  labs(x = "Age Group", y = "Percent of Population") +
+  guides(col = guide_legend(nrow = 2)) +
+  theme_minimal() +
+  theme(legend.position = c(.7,.8), legend.title = element_blank())
+
+ggplot2::ggsave(here::here("fig/population-distribution-all.pdf"),
+                device = "pdf", width = 7, height = 7)
+
+
+df_age %>% 
+  filter(!is.na(income_group)) %>%
+  filter(income_group %in% c("High income", "Lower middle income")) %>%
+  mutate(over60 = ifelse(age_group %in% c("60-64", "65-69", "70-74", "75-79", "80+"), TRUE,FALSE)) %>%
+  group_by(country) %>% mutate(total_pop = sum(n)) %>% ungroup() %>%
+  mutate(frac_pop = n/total_pop) %>%
+  ggplot(., aes(x = age_group, y = frac_pop, color = income_group)) +
+  geom_point(alpha = .3, shape = 19) +
+  stat_smooth(aes(group = income_group), se = F) +
+  geom_label(aes(x="30-34", y=.03, label="Lower middle income countries", color="Lower middle income"), show.legend=F) +
+  geom_label(aes(x="30-34", y=.1, label="Upper middle income countries", color="Upper middle income"), show.legend=F) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  scale_color_hue() +
+  labs(x = "Age Group", y = "Percent of Population") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+df_age %>% 
+  filter(!is.na(income_group)) %>%
   mutate(over60 = ifelse(age_group %in% c("60-64", "65-69", "70-74", "75-79", "80+"), TRUE,FALSE)) %>%
   group_by(country) %>% mutate(total_pop = sum(n)) %>% ungroup() %>%
   mutate(frac_pop = n/total_pop) %>%
   ggplot(., aes(x = age_group, y = frac_pop, color = over60)) +
-  geom_point(alpha = .7) +
-  stat_smooth(aes(group = income_group), se = F, color = "black") +
+  stat_summary(fun = "mean", geom = "point", alpha = .7) +
+  stat_summary(aes(group = income_group), fun = "mean", geom = "line", alpha = .3) +
   facet_wrap(~income_group) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
   scale_color_viridis_d() +
-  labs(x = "Age Group", y = "Percent of Country's Population") +
+  labs(x = "Age Group", y = "Percent of Country Population") +
   theme_minimal() +
   theme(legend.position = "none")
 
 
-df %>% group_by(income_group) %>%
-  summarize(avg_perc_old = weighted.mean(SP.POP.65UP.TO.ZS/100, total_pop))
+###############################################################################
+# Life expectancy at each age ---- ############################################
+
+life_exp <- df_age %>% filter(!is.na(income_group)) %>%
+  group_by(income_group, age_group) %>%
+  summarize(life_expectancy = weighted.mean(life_expectancy, pop, na.rm = T))
+
+
+ggplot(life_exp, aes(x = age_group, y = life_expectancy, color = income_group, fill = income_group, group = income_group, label = income_group)) +
+  geom_point(alpha = .7) +
+  geom_line() +
+    annotate("rect", xmin = "20-24", xmax = "60-64", ymin = 0, ymax = Inf,
+             alpha = .2) +
+      ggrepel::geom_label_repel(data = filter(life_exp, age_group == "30-34"),
+                                color = "white",
+                                force = 6) +
+  scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 6)) +
+  scale_color_hue() +
+  scale_fill_hue() +
+  labs(y = "Expected years remaining", x = "Age group") +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(size = 8))
+  
+  ggsave(here::here("fig/life-expectancy.pdf"), device = "pdf", width = 6, height = 5, dpi = 1200)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -124,6 +237,16 @@ ggsave(here::here("fig/retail-mobility.pdf"), width = 5, height = 5, dpi = 1200)
 
 
 # Food insecurity ----
+
+fies <- readRDS(here::here("data/fies.RDS"))
+fies <- fies[, country := countrycode::countrycode(country_code, origin = "iso3c", destination = "country.name")]
+fies <- merge(fies, df, by = c("country_code" = "iso3c"))
+
+
+
+
+
+
 
 foo <- df %>% group_by(Country) %>% summarize(avg_food_insecurity = mean(avg_food_insecurity, na.rm = T), income_block = unique(income_block)) %>% filter(!is.na(income_block) & !is.na(avg_food_insecurity)) 
 

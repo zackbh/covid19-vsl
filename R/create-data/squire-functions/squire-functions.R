@@ -31,8 +31,36 @@ calc_deaths <- function(squire_output, reduce_age = TRUE){
   
 }
 
+#' Calculate hospital demand and occupancy from Squire SEEIR model
+#'
+#' @param squire_output Takes an explicit SEEIR Squire model object as input
+#'
+#' @return Returns a t x 9 tibble with rows for hospital and ICU demand, occupancy, and capacity, and their delta
+#' @export
+#'
+#' @examples 
+calc_hospital_demand <- function(squire_output){
+  
+  results <- format_output(squire_output,
+                          var_select = c("hospital_occupancy", "hospital_demand",
+                                         "ICU_occupancy", "ICU_demand"))
+  output <- results %>%
+    dplyr::group_by(compartment, t) %>%
+    dplyr::summarize(y = mean(y)) %>%
+    tidyr::pivot_wider(id_cols = t, values_from = y, names_from = compartment) %>%
+    mutate(hospital_capacity = max(hospital_occupancy),
+           ICU_capacity = max(ICU_occupancy)) %>%
+    rowwise() %>%
+    mutate(hospital_unmet = if_else(hospital_demand - hospital_capacity > 0, hospital_demand - hospital_capacity, 0),
+           icu_unmet = if_else(ICU_demand - ICU_capacity > 0, ICU_demand - ICU_capacity, 0)) %>%
+    ungroup()
+  
+  return(output)
+  
+}
+
 run_squire <- function(country = "Bangladesh",
-                       mitigation_day = 80, mitigation_duration = 45, 
+                       mitigation_day = 80, mitigation_duration = 40, 
                        social_distancing = 1, increased_mortality_pr = 1,
                        time_period = 365){
   
@@ -55,8 +83,62 @@ run_squire <- function(country = "Bangladesh",
   return(output)
 }
 
+get_social_distance <- function(strategy){
+  
+  #assertthat::assert_that(assertthat::is.string(strategy))
+  
+  distance <- dplyr::case_when(strategy == "Unmitigated" ~ 1,
+                   strategy == "Individual distancing" ~ .8,
+                   strategy == "Social distancing" ~ .5,
+                   strategy == "Social distancing+" ~ (1/3),
+                   strategy == "Suppression" ~ .2,
+                   TRUE ~ NA_real_)
+  
+  assertthat::assert_that(assertthat::noNA(distance))
+  
+  return(distance)
+  
+}
 
-grid_search <- function(country = "Bangladesh", strategy = "Unmitigated", mitigation_day = NULL, mitigation_duration = 35, increased_mortality_pr = 2, reduce_age = TRUE){
+get_population <- function(identifier = "code"){
+  
+  assertthat::assert_that(assertthat::is.string(identifier))
+  
+  if (identifier == "code"){
+    squire::population %>% 
+      group_by(iso3c) %>% 
+      summarize(population = sum(n, na.rm = T)) %>%
+      ungroup()
+  }
+  else{
+    squire::population %>% 
+      group_by(country) %>% 
+      summarize(population = sum(n, na.rm = T)) %>%
+      ungroup()
+  }
+  
+
+  
+}
+
+get_hospital_demand <- function(country = "Bangladesh", strategy = "Unmitigated", mitigation_day = 10, mitigation_duration = 40, increased_mortality_pr = 2){
+  
+  social_distancing <- get_social_distance(strategy)
+  
+  output <- run_squire(country = country, mitigation_day = mitigation_day, mitigation_duration = mitigation_duration,
+                       social_distancing = social_distancing, increased_mortality_pr = increased_mortality_pr)
+  
+  vals <- calc_hospital_demand(output) %>% 
+    dplyr::mutate(country = country,
+                  strategy = strategy)
+  
+  return(vals)
+  
+    
+}
+
+
+grid_search <- function(country = "Bangladesh", strategy = "Unmitigated", mitigation_day = NULL, mitigation_duration = 40, increased_mortality_pr = 2, reduce_age = TRUE){
   
   #' Title
   #'
@@ -71,12 +153,7 @@ grid_search <- function(country = "Bangladesh", strategy = "Unmitigated", mitiga
   #' @examples
   
   
-  social_distancing <- dplyr::case_when(strategy == "Unmitigated" ~ 1,
-                                        strategy == "Individual distancing" ~ .8,
-                                        strategy == "Social distancing" ~ .5,
-                                        strategy == "Social distancing+" ~ (1/3),
-                                        strategy == "Suppression" ~ .2,
-                                        TRUE ~ NA_real_)
+  social_distancing <- get_social_distance(strategy)
   
   output <- run_squire(country = country, mitigation_day = mitigation_day, mitigation_duration = mitigation_duration,
                        social_distancing = social_distancing, increased_mortality_pr = increased_mortality_pr)
@@ -85,7 +162,8 @@ grid_search <- function(country = "Bangladesh", strategy = "Unmitigated", mitiga
     dplyr::mutate(country = country,
            strategy = strategy,
            mitigation_day = mitigation_day,
-           mitigation_duration = mitigation_duration)
+           mitigation_duration = mitigation_duration,
+           increased_mortality_pr = increased_mortality_pr)
   
   return(deaths)
   

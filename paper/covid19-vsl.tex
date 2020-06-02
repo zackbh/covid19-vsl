@@ -17,6 +17,7 @@
 \usepackage{booktabs}
 \usepackage{setspace}
 \usepackage{mdframed}
+\usepackage{adjustbox}
 \usepackage{setspace}
 \usepackage[authordate, backend=biber]{biblatex-chicago}
 \bibliography{covid19.bib}
@@ -48,73 +49,196 @@ Social distancing is the primary policy prescription for combating the COVID-19 
 
 \doublespacing
 
-The COVID-19 pandemic has generated furious debate about what public health measures might prove most effective at containing the disease and minimizing mortality rates. Without a vaccine for the novel coronavirus, governments have implemented social distancing and quaratine measures in China, Europe, and the United States designed to ``flatten the curve.'' The goal is to slow the spread of the virus to reduce immediate pressure on the healthcare system, minimizing transmission rates so that targeted testing and tracking measures can be effective in combating the disease. A parallel conversation has emerged about the economic devastation caused by such measures, especially as the virus reaches low-income countries. As social distancing becomes the universal strategy against COVID-19, a question emerges: are shuttering the economy for weeks or months and mass unemployment reasonable costs to pay? 
+The COVID-19 pandemic has generated furious debate about what public health measures might prove most effective at containing  the disease and minimizing mortality. Without a vaccine for the novel coronavirus, governments have implemented social distancing and quarantine measures in China, Europe, and the United States designed to ``flatten the curve'' of the pandemic. The goal is to minimize transmission rates so that targeted testing and tracking measures can be effective in combating the disease, slowing the spread of the virus to reduce pressure on healthcare systems. %Long-term benefits may accrue as the trajectory of the disease slows down, leading to fewer total infections.
+In parallel to the implementation of these public health measures, a conversation has emerged about the economic consequences of lockdown and suppression, especially within low-income countries. With social distancing having become the universal strategy against COVID-19, a question emerges: are shuttering the economy for weeks or months and mass unemployment reasonable costs to pay? 
 
-The answer for the United States and other rich countries appears to be yes. By assigning an economic value to the risk of COVID-19 mortality predicted in epidemiological models, it becomes clear that the cost of \textit{not} intervening in rich countries would be greater than the deepest economic recession. In other words, according to any reasonable benefit-cost metric, social distancing interventions and aggressive suppression are overwhelmingly justified.
+The answer for the United States and other rich countries appears to be yes. By assigning an economic value to the mortality risk of COVID-19, it becomes clear that the cost of \textit{not} intervening in rich countries would be enormous. In other words, according to any reasonable benefit-cost metric, social distancing interventions and aggressive suppression are overwhelmingly justified.
 
-The purpose of this note is to quantitatively explore whether similar mitigation and suppression strategies are equally valuable in low and middle income countries. There are a number of demographic and infrastructural reasons why the costs of COVID-19 and the benefits to social distancing may vary with the income level of a country. There is a greater prevalence of comorbidities and endemic disease in poor countries, such as malnutrition and tuberculosis, which may negatively interact with COVID-19 infection. The healthcare systems in poor countries have few hospital beds and ventilators per capita, and are predicted to be unable to absorb a rapid influx of COVID-19 patients. This means, however, that flattening the curve of the disease to fall within the capacity of the healthcare system may not be feasible, no matter the extent of the lockdown or mitigation efforts employed. Many more workers in poor countries are self-employed or in the informal sector and depend on daily wages to feed their families. In the absence of strong social protection and insurance, the cost imposed by social (and economic) distancing may be large in terms of immediate deprivation and hunger. As a result compliance rates with lock-down orders or social distancing guidelines may be lower in countries with weaker enforcement capacity. Most importantly however, the high average age in rich countries drives the predicted high mortality from the unmitigated spread of COVID-19, while the younger population in low-income yields a much lower predicted mortality risk.
+The purpose of this paper is to quantitatively explore the value of similar mitigation and suppression strategies in low- and middle-income countries. There are a number of demographic and infrastructural reasons why the benefits of social distancing to suppress COVID-19 may co-vary with the income level of a country. Lower income countries have relatively younger populations, and the predicted mortality of COVID-19 increases sharply with age. Therefore the majority of the population in poor countries is predicted to face a relatively low mortality risk from the coronavirus. Furthermore, the healthcare systems in poor countries often have limited infrastructure, and are comparatively less capable of absorbing a rapid influx of COVID-19 patients. This means, however, that flattening the curve of the disease to fall within the capacity of the healthcare system may not be feasible, no matter the extent of the lockdown or mitigation efforts. 
 
-To determine the relative value of suppression strategies in rich versus poor countries, we embed estimates of the country-specific costs of mortality developed by \textcite{viscusi2017} into the influential epidemiological model developed by the the Imperial College London COVID-19 Response Team that predicts mortality from the spread of the virus \parencite{squire,ferguson2020,walker2020}. \textcite{greenstone2020} adapt this model to assign an economic value to COVID-19 mortality in the United States. They predict that social distancing measures will save 1.76 million lives (both directly, and indirectly by reducing hospital overcrowding), with a total welfare value of 7.9 trillion dollars. Widespread social distancing and stay-at-home orders may create economic hardship in the United States, but this leaves no room for debate about the value of this public health intervention. We conduct a similar exercise for all rich and poor countries to explore whether such a policy prescription applies uniformly, or whether more nuanced thinking, analysis, and strategizing is required in the case of low-income countries.
+The economic welfare value of reducing mortality risk from COVID-19 may also be lower in poorer countries as their population is less willing to trade off their economic livelihood. By definition, the poorest individuals and households live close to subsistence levels. As a result they are necessarily willing to accept higher risks to earn a living than richer people who may enjoy savings or social welfare systems to sustain them through a prolonged lockdown. Many more workers in poor countries are self-employed or in the informal sector and depend on daily wages to feed their families. In the absence of strong social protection and insurance, the cost imposed by social and economic distancing may be large in terms of immediate deprivation and hunger. The difference in risk valuation reflects a necessary determination by people who are unwilling to trade their livelihoods for a reduction in probabilistic risk.
+
+There are other ways in which the value of suppressing the spread of COVID-19 may vary across countries of different income levels. There is a greater prevalence of comorbidities and endemic disease in poor countries, such as malnutrition and tuberculosis, which may negatively interact with COVID-19 infection. Poorer countries have more limited hospital capacity per capita; which may significantly increase mortality rates. Compliance rates with lock-down orders or social distancing guidelines may be lower in countries with weaker enforcement capacity. The importance of these factors cannot be fully determined prior to making these policy decisions. 
+
+To determine the relative value of suppression strategies in rich versus poor countries, we embed estimates of the country-specific costs of mortality into the influential epidemiological model developed by the the Imperial College London COVID-19 Response Team that predicts mortality from the spread of the virus \parencite{squire,ferguson2020,walker2020}. \textcite{greenstone2020} adapt an early version of this model to assign an economic value to COVID-19 mortality in the United States. They predict that social distancing measures will save 1.76 million lives (both directly, and indirectly by reducing hospital overcrowding), with a total welfare value of 7.9 trillion dollars. Widespread social distancing and stay-at-home orders may create economic hardship in the United States, but this leaves no room for debate about the value of this public health intervention. We conduct a similar exercise for all rich and poor countries to explore whether such a policy prescription applies uniformly, or whether more nuanced thinking, analysis, and strategizing is required in the case of low-income countries.
 
 
-\section{Methods and Results}
+\section{Mortality}
 
-\subsection{Mortality}
+We generate mortality predictions for SARS-CoV-2 epidemic trajectories across five non-pharmacological intervention scenarios using an age-structured compartmental SEEIR model designed by the Imperial College London COVID-19 Response Team \parencite{squire}. The model simulates the spread of the novel coronavirus in each country and resultant hospitalizations and fatalities, according to that country's demographic structure and healthcare capacity. In this compartmental model each country's population starts as susceptible, becoming exposed, infected, and recovering over time. Infected individuals experience either a mild infection or a more severe form that requires hospitalization. Hospitalized cases are then further split between those requiring intensive treatment and those requiring routine hospital care. The model assigns a mortality probability to individuals that receive care if capacity exists when they need it, and a higher mortality likelihood to individuals that require but cannot receive care due to capacity constraints. We estimate mortality rates under different scenarios where we temporarily modify the infectivity (R0) of COVID-19 to represent the implementation of a social distancing policy in each country. We consider five scenarios:
 
-Squire is a software package designed by the Imperial College London COVID-19 Response team to generate estimates of the SARS-CoV-2 epidemic trajectories under a number of control scenarios. The model uses an age-structured SEIR model, incorporating explicit passage through healthcare settings and explicit progression through disease severity stages, which allows us to simulate the impacts of interventions, such as social distancing and more stringent suppression strategies \parencite{squire}.
-
-Using Squire we predict COVID-19 mortality from all countries across five policy scenarios:
 \begin{enumerate}
-	\item Unmitigated spread of the coronavirus 1
-	\item Individual but not widespread social distancing (4/5)
-	\item Social distancing that halves contact rates (1/2)
-	\item Social distancing that takes contact rates down to 1/3
-	\item Full suppression strategies that reduce contact rates to 1/5
+	\item The unmitigated spread of COVID-19
+	\item An ``individual distancing'' policy, similar to Sweden where workplaces largely remain open by large gatherings are discouraged, reducing infectivity by 20\%.
+	\item A broader social distancing policy than reduces infectivity by 50\%.
+	\item A more intensive social distancing policy, ``social distancing+'' that reduces infectivity by 66\%.
+	\item Lockdown and full suppression of social contact, reducing infectivity by 80\%.
 \end{enumerate}
 
-The first scenario is unlikely to be realizable in the world, as we would expect behavior to endogenously shift over the course of the pandemic to bring down the effective transmission rate of the virus. To that end, individual but not widespread social distancing is considered\textemdash similar to policies persued in Sweden, which have left open restaurants, bars, and other areas where people may congregate. % https://mrc-ide.github.io/covid19estimates/#/details/Sweden
-We further consider broader social distancing policies that reduce the infectivity of COVID-19 by half or a third, respectively. Finally, we consider stronger suppression policies that through widespread social distancing reduce the infectivity of the disease to 1/5 of its original estimate. For the basic reproductive number of the disease we use the estimate of 3.0 provided by \textcite{flaxman2020} and suggested in Squire.  % https://mrc-ide.github.io/covid19estimates/#/interventions
+In each of these scenarios we allow the policy to remain in effect for a duration of thirty-five days, representing the average duration of most lockdown and social distancing policies around the world. After thirty-five days the simulated policy is lifted and the R0 of the virus returns to its base level of infectivity, set at 3.0. We have chosen a one-shot policy due to its relative simplicity. While rolling lockdowns have been proposed as an effective way of combating the spread of the coronavirus, we are skeptical as to the capacity of any government being able to repeatedly implement and terminate lockdown orders. In countries with limited state capacity, and the majority of the workforce in the informal sector, there are few policy tools to implement sophisticated partial lockdowns. Whether the infectivity of the virus should return to its prior level post-lockdown is an open question. Individuals and households may naturally change their behavior, even absent government policy, to reduce the spread of COVID-19. However, if a significant proportion of transmissions to occur through the workplace or on public transportation, unavoidable to most people returning to work after a lockdown, then the infectivity of the virus may necessarily rise.
 
+
+Our analysis includes 178 countries, grouping them according to their 2020 World Bank income classification: high-, upper-middle, lower-middle, and low-income economies \parencite{wb-income}. Data on life expectancy for each age group is given by the World Health Organization Global Health Observatory \parencite{who}. %TODO add grid search
+
+
+%The first scenario is unlikely to be realizable in the world, as we would expect behavior to endogenously shift over the course of the pandemic to bring down the effective transmission rate of the virus. To that end, individual but not widespread social distancing is considered\textemdash similar to policies pursued in Sweden, which have left open restaurants, bars, and other areas where people may congregate. % https://mrc-ide.github.io/covid19estimates/#/details/Sweden
+
+
+\begin{figure}[htbp!]
+\centering
+\caption{What is mortality risk from COVID-19 by country?}
+  \includegraphics[width = \textwidth, keepaspectratio]{../fig/mortality-risk.pdf}
+\label{fig:perc-mortality}
+\end{figure}
  
-Figure \ref{fig:perc-mortality} shows the predicted average mortality from COVID-19 for a set of countries and regions as well as distribution of the percentage of the population above the age of 65 by World Bank income classification. Richer regions, where the population skews older, risk losing more lives in an unmitigated outbreak. Predicted population level mortality rates are just below 0.8\% in the United States as in other OECD economies.\footnote{
+Figure \ref{fig:perc-mortality} shows predicted mortality from the spread of COVID-19 for a set of countries. In richer countries like the United Kingdom and the United States the model predicts more than 1.2\% of the population will die as a result of COVID-19 in an unmitigated scenario. In poorer countries, such as Nigeria, Pakistan, and Bangladesh, total population losses are approximately half that. Moreover, while mortality falls sharply in the United States and the United Kingdom when social distancing measures are imposed, the change in mortality is far less responsive in lower-income countries. We aggregate total predicted mortality under each scenario by total population across all four income groups in Figure \ref{fig:deaths-inc-bloc}, finding that expected mortality is lower in poorer countries despite their comparatively more limited health care systems.\footnote{
     The global mortality predicted from the unmitigated spread of COVID-19 is over 135 million. For context, the H1N1 Spanish influenza of 1918 is estimated to have killed between 50 to 100 million people, somewhere between .95\% and 5.4\% of the world population at the time. See: \textcite{johnson2002,taubenberger2006}.}
 
 
-Countries and regions with younger populations, such as Bangladesh and Sub-Saharan Africa, face much lower risk, with the unmitigated spread of COVID-19 leading to predicted mortality rates of 0.39\% and 0.21\%, respectively. This is \emph{despite} the comparatively poor health system capacity in poorer countries (proxied by hospital beds per capita) incorporated into the Imperial College model. The right panel of the figure explains why. The proportion of the population that is elderly varies greatly between low-income (3\%) and high-income countries (17.4\%).
+\begin{figure}
+\centering
+\caption{Percentage of Population Lost by Income Group and Intervention}
+\includegraphics[width = \textwidth, keepaspectratio]{../fig/deaths-inc-bloc}
+\label{fig:deaths-inc-bloc}
+\end{figure}
 
-\subsection{Assumptions Driving the Mortality Predictions}
+\subsection{Demographic risk profiles}
 
-\subsection{Age-structured IFR}
-
-\subsection{Demographics in poorer countries}
-
-\subsection{Hospital overflow mortality}
-
-
-
+The primary cause of the divergent mortality risk from COVID-19 between countries of higher and lower income levels is their demographic structure. High-income countries tend to have lower fertility rates and older populations; low-income countries tend to have higher fertility rates and younger populations. This is important because the mortality risk of COVID-19 varies considerably by age. Younger people appear to face relatively low mortality risk from the virus, while the mortality rate increases sharply among the elderly. Age-specific mortality parameters are given in Figure \ref{fig:ifr}. The proportion of cases requiring hospitalization increases with age, up to nearly 20\% of people age 75 and above. Of the patients hospitalized, a subset will require critical care, such as mechanical ventilation. We set a mortality rate of 50\% across all ages for those requiring and receiving critical care, and a mortality rate of 95\% for those requiring but not receiving critical care. For patients hospitalized but not requiring critical care, the mortality rate is low for those under the age of 60, reaching nearly 60\% among the elderly. A patient that would require but cannot receive hospital care due to capacity constraints, their likelihood of dying doubles, to a maximum of 90\% \parencite{verity2020,squire}.
 
 
-The prediction of significantly lower incidence of COVID-19 deaths in poor countries is primarily based on the younger average age of their population. The model accounts for the fact that poor countries have fewer hospital beds and lower ICU capacity, and will be entirely unable to meet peak demand. The lower marginal benefits of implementing suppression policies in poor countries arises from the fact that by the time suppression is triggered, the model predicts that COVID-19 will have already spread significantly, overwhelming countries with low healthcare capacity. Older people in low-income countries are also more likely to become infected by COVID-19 as they have higher contact with other individuals inside and outside the household, but the large demographic differences between rich and poor countries outweighs this factor.
+A question that we cannot fully answer at this time is the likelihood of death for an infection that requires but does not receive hospital care. As there are currently no effective treatments for COVID-19 it is unclear whether non-critical cases are receiving lifesaving care in hospitals, or whether the support they receive only increases their comfort without significantly modifying their likelihood of dying. We consider a range of parameters for excess mortality in Section \ref{sec:vsl}. A second concern is that the epidemiological model does not account for the higher burden of infectious diseases and chronic illness in low-income countries, particularly in children. If these factors negatively interact with COVID-19 this could lead to an under-estimate of mortality in low-income countries \parencite{walker2020,squire}. 
 
-The model, however, does not presently account for the higher burden of infectious diseases and chronic illness in low-income countries, particularly in children, basing its estimate of healthcare demand and overall mortality on data from China. This could lead to an under-estimate of mortality in low-income countries \parencite{walker2020}. On the other hand, the model presumes equally effective implementation of mitigation or suppression policies in poor and rich countries. Recent experience in India with the large and slow exodus of migrant workers from cities following lock-down suggests that suppression policies imperfectly implemented in low-capacity settings may have counter-productive effects on containing COVID-19.
+\begin{figure}
+\centering
+\caption{Estimated Risks of COVID-19 by Age Group}
+\includegraphics[width = \textwidth, keepaspectratio]{../fig/ifr}
+\label{fig:ifr}
+\end{figure}
 
-\subsection{Differences in the Economic Value of Interventions in Rich and Poor Countries}
+In Figure \ref{fig:pop-dist} we show the distribution of age across countries that are classified as either high- or low-income. Each point represents the fraction of the population within that age range in a country. Where the population structure in higher income countries is more evenly distributed across the entire age range, the population in lower-income countries is heavily skewed younger. This skewness means that lower income countries have a much smaller fraction of their population that is predicted to be hospitalized or die from COVID-19 if they contract the virus.
 
-The COVID-19 mitigation strategies considered in our model are all based on reducing contact rates. However, lower contact comes at the cost of reduced economic activity and lower earnings. We measure the economic value of avoided mortality from mitigation policies in each country using \textcite{viscusi2017}'s country-specific value of statistical life (VSL) estimates. The VSL is based on how people trade off the risk of harm and economic reward. Individuals face mortality risks, whether from disease or as a result of their occupation, and individuals may accept these risks willingly when appropriately compensated. A recent example is the strike by Instacart workers in the United States during this pandemic, who are demanding an additional \$5 in hazard pay per order as compensation for their increased exposure to the disease \parencite{wapo2020}. The VSL adds up these probabilistic risks to estimate the monetary value that people in a given country assign to saving one of these \textit{statistical} lives. The VSL is not a measure of the economic productivity that a person provides, but rather how society as a whole assigns value to saving a life.
+\begin{figure}
+\centering
+\caption{Population distribution of high and low income countries}
+\includegraphics[width = \textwidth, keepaspectratio]{../fig/population-distribution-hilow}
+\label{fig:pop-dist}
+\end{figure}
 
-Figure \ref{fig:vsl-levels} displays the estimated dollar value of total losses from deaths under each intervention scenario when the \textcite{viscusi2017} VSL estimates are embedded in the Imperial College mortality predictions. The cost of leaving COVID-19 uncontrolled in the United States is unambiguously large. This is due to higher predicted mortality rates in the United States relative to other countries and the higher base VSL. In comparison to U.S. losses, the dollar costs of uncontrolled COVID-19 in large countries such as Pakistan or Nigeria look minuscule. The more relevant question for any country-specific policy is the total cost of COVID-19 mortality under each scenario relative to that country's own GDP. 
+\subsection{Medical system capacity}
 
-Although the value of intervention is more comparable by this metric, without mitigation efforts COVID-19 still imposes a large welfare cost\textemdash above 130\% of GDP in rich countries like the United States and Japan. In contrast, in the unmitigated scenario the losses in India, Bangladesh, Pakistan, Nigeria, Nepal are about 50-60\% of their own annual GDP. The second important lesson from Figure \ref{fig:vsl-gdp} is that moving from a policy of doing nothing to imposing social distancing yields a very large welfare improvement in rich countries: Equivalent to 59\% of U.S. GDP. However, the same policy of social distancing increases estimated welfare in Bangladesh by only 14\% of its own lower GDP. Imposing more suppressive policies in the United States yield additional increases in welfare equivalent to 42\% of its GDP, while moving from social distancing to suppression in Bangladesh only increases welfare by an additional 19\% of its own (lower) GDP. The relative gains of more stringent policy measures against COVID-19 are shown in Table \ref{tab:marginal-value-intervention} for countries at varying income levels. 
+The unmitigated spread of COVID-19 can overwhelm the medical system of a country. One benefit to social distancing policies that flatten the curve of the disease trajectory is to spread the number of infections across a longer period of time, allowing more patients to be accommodated by existing infrastructure. In poorer countries with more limited healthcare capacity\textemdash proxied by the number of hospital and ICU beds\textemdash it may be impossible to reduce the spread of COVID-19 sufficiently so that patient demand can be met.
 
-Underlying the relatively modest benefit estimates from mitigation and suppression policies in poorer countries are three critical factors. First, in poor countries there are fewer old people to who can benefit from targeted distancing. Further, the elderly often reside with younger family members, so contact rates can only be reduced within limits. Second, the relatively low hospital and ICU capacity at baseline in poorer countries means that flattening the mortality curve is unlikely to prevent hospitals from being overwhelmed. Third, the opportunity cost of social distancing is larger in poorer countries, and the VSL is therefore lower. Simply put, rich people can more easily meet their basic needs while social distancing, while a poor person may need to prioritize income-generating opportunities to put food on their family's table.
+In Figure \ref{fig:healthcare-demand} we plot the estimated demand for healthcare under two scenarios as a percentage of existing capacity in a high- and low-income country, Bangladesh and the United States, respectively. The first scenario involves the unmitigated spread of COVID-19 in both countries, and the second involves the suppression scenario: intensive social distancing that reduces the virus infectivity by \(\frac{4}{5}\) for a period of thirty-five days. Assuming identically implemented and effective policies in both countries, suppression is effective at allowing existing U.S. healthcare infrastructure to accommodate demand, while the healthcare infrastructure in Bangladesh is overwhelmed in either case. In Bangladesh the unmitigated spread of COVID-19 leads to excess demand that peaks at approximately 250\% of hospital bed capacity; under an intensive social distancing policy excess demand peaks at approximately 220\%. In the United States an identical policy would drop peak demand from 134\% of capacity to approximately 105\%. It is feasible to imagine policies to increase capacity by five percentage points in the case of the United States, it seems less likely that the number of hospital beds could increase by 200\% in any country over a month. 
+
+\begin{figure}
+\centering
+\caption{Hospital and ICU demand in Bangladesh and the U.S.}
+\includegraphics[width = .48\textwidth, height = 4.5in, keepaspectratio]{../fig/hospital-demand}
+\includegraphics[width = .48\textwidth, height = 4.5in, keepaspectratio]{../fig/icu-demand}
+\label{fig:healthcare-demand}
+\end{figure}
+
+\section{Differences in the Economic Value of Non-Pharmaceutical Interventions in Rich and Poor Countries}
+\label{sec:vsl}
+
+
+Increasing social distancing measures save an increasing number of lives. We are interested in determining the relative value of distancing and lockdown measures in different countries. To do so we embed country-specific estimates of the welfare value of risk reduction, the value of a statistical life (VSL) and the value of a statistical life-year (VSLY), into our mortality predictions \parencite{viscusi2017,robinson2019}.\footnote{We use the country-adjusted VSL from \textcite{viscusi2017}. Alternative VSL estimates from \textcite{robinson2019} are used as a robustness check.} This allows us to translate between the change in predicted mortality and the social welfare benefit this would provide each country.
+
+It is important to emphasize that social distancing policies are a form of risk reduction. We can predict in expectation how many lives each policy may save, but we cannot know exactly which person will benefit. The spread of COVID-19 is not eliminated under any feasible form of social distancing, but the likelihood of mortality can be reduced. To provide a valuation for this probabilistic reduction we use the VSL, a metric of the economic value of risk. The VSL is derived from studies of how individuals  accept mortality risks, whether as a result of their occupation or from external environmental sources or disease, on a regular basis when appropriately compensated. Adding up the value that people assign to small changes in probabilistic risk provides an estimate of the monetary welfare value that people assign to saving one such \textit{statistical} life. The VSL is in no way a measurement of the economic productivity that a person provides, but rather is based on how individuals themselves assign value to the risks they face.\footnote{
+	One way of considering the VSL is through a recent strike by Instacart workers in the United States during this pandemic, who are demanding an additional \$5 in hazard pay per order as compensation for their increased exposure to the disease \parencite{wapo2020}.}
+
+
+\begin{figure}[htbp!]
+\centering
+\caption{What is the estimated VSL lost for each country?}
+  \includegraphics[width = \textwidth, height = 4in, keepaspectratio]{../fig/vsl-levels}
+\label{fig:vsl-levels}
+\end{figure}
+
+
+Figure \ref{fig:vsl-levels} displays the estimated dollar value of total losses from deaths under each intervention scenario when the \textcite{viscusi2017} VSL estimates are embedded in the mortality predictions. The cost of leaving COVID-19 uncontrolled in the United States is unambiguously large. This is due to higher predicted mortality rates in the United States relative to other countries and the higher base VSL. In comparison to U.S. losses, the dollar costs of uncontrolled COVID-19 in large countries such as Pakistan or Nigeria look minuscule. A more relevant question for any country-specific policy is the total cost of COVID-19 mortality under each scenario relative to that country's own GDP. 
+
+
+\begin{figure}[htbp!]
+\centering
+\caption{What is the relative VSL lost for each country?}
+  \includegraphics[width = .48\textwidth, height=4.5in, keepaspectratio]{../fig/vsl-gdp-a.pdf}
+  \includegraphics[width = .48\textwidth, height=4.5in, keepaspectratio]{../fig/vsl-gdp-b.pdf}
+\label{fig:vsl-gdp}
+\end{figure}
+
+Figure \ref{fig:vsl-gdp} shows a comparison of the VSL lost by scenario and country as a fraction of GDP, with the United States benchmarking losses in high-income countries. Without mitigation efforts COVID-19 imposes a large relative welfare cost in high-income countries\textemdash approximately 200\% of the GDP of the United States. In contrast, in the unmitigated scenario the losses in India, Bangladesh, Pakistan, Nigeria, Nepal are approximately half that, when scaled against their own GDP.
+
+\begin{figure}[htbp!]
+\centering
+\label{fig:vsl-income}
+\caption{Estimated Value of COVID-19 Intervention by Income Group}
+\includegraphics[width = .9\textwidth, keepaspectratio]{../fig/vsl-income-block}
+\end{figure}
+
+
+The other lesson from Figure \ref{fig:vsl-gdp} is that moving from a policy of doing nothing to imposing social distancing yields a large welfare improvement in rich countries. We show the estimated marginal value of an increasing social distancing policy in Table \ref{tab:marginal-value-vsl}. The marginal value of imposing even minor individual distancing measures in high-income countries is large, approximately 43\% and 33\% in the United Kingdom and the United States, respectively. An identical policy in Mexico only yields a welfare benefit of approximately 19\% of its GDP, and 6\% of GDP in Bangladesh. Moving from a policy of individual distancing to one of full social distancing policy, decreasing the infectivity of COVID-19 to 50\% of its base value for a period of 40 days, yields a welfare value increase equivalent to 66\% of the UK's annual GDP and 46\% in the United States. The same increase in policy stance in India yields a welfare increase equivalent to 8\% of its GDP, and and in Bangladesh 6\% of its GDP. Increasing social distancing measures yield significant welfare improvement in richer countries, in poorer countries this value declines quickly. % CHECK VALS
+
+\input{../tab/marginal-value-vsl.tex}
+
+\subsection{Value of Statistical Life-Years}
+
+VSL is most appropriate to evaluate mortality risk reduction when its benefits are spread across a population. In the case of COVID-19 however, the majority of risk reduction is concentrated among the elderly. As shown in Figure \ref{fig:ifr}, the risk of hospitalization and dying from the coronavirus increase sharply with age. If social distancing and lockdown policies reduce mortality risk differentially across age groups, we may wish to account for the number of expected life \textit{years} saved under any policy. This is not to distinguish between the value of saving old versus young lives, but rather to provide a more granular metric by which to estimate the welfare value of risk reduction.
+
+The value of a statistical life year (VSLY) is derived by dividing the country specific population-averaged VSL by the life expectancy of a working-age person, someone between the ages of 20-64 \parencite{robinson2019}. Population averaged life expectancy for each income group is shown in Figure \ref{fig:life-exp}, with working ages of 20-64 shaded in gray. We see that life expectancy declines linearly with age, and a clear separation in life expectancy at all ages between income groups.
+
+\begin{figure}
+\centering
+\caption{Population Averaged Life Expectancy by Income Group Classification}
+\includegraphics[width = .7\textwidth, keepaspectratio]{../fig/life-expectancy}
+\label{fig:life-exp}
+\end{figure}
+
+In Figure \ref{fig:vsly-gdp} we reproduce our analysis from Section \ref{sec:vsl} using VSLY. Continuing to use the United States as a benchmark for rich countries, we see that the value of social distancing remains significantly higher in richer countries. However there is a pronounced level shift in the welfare value of social distancing between Figures \ref{fig:vsl-gdp} and \ref{fig:vsly-gdp}. Accounting for the risk profile of COVID-19\textemdash where the majority of risk reduction is accrued by the elderly\textemdash means that there are relatively few years saved in expectation by lockdown and suppression policies. Accordingly, the welfare value of these interventions is less than a static valuation of welfare.
+
+\begin{figure}[htbp!]
+  \centering
+  \caption{What is the value of social distancing for each country?}
+  \includegraphics[width = .48\textwidth, keepaspectratio]{../fig/vsly-gdp-a}
+  \includegraphics[width = .48\textwidth, keepaspectratio]{../fig/vsly-gdp-b}
+  \label{fig:vsly-gdp}
+\end{figure}
+
+The marginal value of an increasing policy stance remains small in poorer countries. Where we estimate social distancing to provide a welfare value equivalent more than 30\% of GDP in countries like the United Kingdom and the United States, an identical policy produces a welfare gain of less than 10\% in lower-middle and low-income countries as shown in Figure \ref{fig:vsly-income-group}. Using the VSLY instead of the VSL corroborates our conclusion that the value of social distancing and other measures to suppress COVID-19 is unequally distributed between rich and poor countries.
+% CHECK VALS
+
+\input{../tab/marginal-value-vsly.tex}
+
+
+Beyond the level shift when evaluating the value of social distancing policies in rich and poor countries, our conclusion about the relative value of these interventions remain the same. There is a steep welfare gradient for rich countries implementing increasingly suppressive measures. We estimate a much smaller marginal value to each intervention for poorer countries, where lower life expectancies means that identical measures save fewer years.  
+
+
+\begin{figure}
+\centering
+\caption{VSLY by income group}
+\includegraphics[width = \textwidth, keepaspectratio]{../fig/vsly-income-group}
+\label{fig:vsly-income-group}
+\end{figure}
 
 \subsubsection{Limitations of Using VSL to Value Mortality Reduction}
 
-One concern with using the VSL to estimate welfare loss from COVID-19, is that income levels play a significant role in determining individual willingness to accept compensation for increased risks. That people in poor countries accept greater risks for lower compensation, leading to a lower estimate of their VSL, may be due to necessity rather than choice. Moreover, the VSL is estimated using very small changes in the relative risk of dying, on the order of 1:10,000. The different COVID-19 mitigation scenarios under consideration shift estimated mortality rates more drastically: two to three orders of magnitude larger. For example, moving from no mitigation to social distancing in Bangladesh reduces average risk by 1:1,000, and moving from social distancing to late suppression reduces average risk by a similar amount. It is unclear whether it is appropriate to extrapolate the  VSL, estimated from small increases in relative risk, to the much larger risks from COVID-19. Our estimates of the value of each strategy are likely to underestimate the welfare losses to COVID-19 in countries with older populations, where the change in relative risk under strategy is the largest.
+A concern with using the VSL and the VSLY to estimate the welfare value of COVID-19 interventions is the degree to which these values are determined by the income level of each country. Individual willingness to accept compensation for increased risks is largely determined by how much money a person has. That people in poor countries accept greater risks for lower compensation, leading to a lower estimate of their VSL, may be due to necessity rather than some preference for risk. Moreover, the VSL is estimated using very small changes in the relative risk of dying, on the order of 1:10,000. The different COVID-19 mitigation scenarios under consideration shift estimated mortality rates more drastically: two to three orders of magnitude larger. %For example, moving from no mitigation to social distancing in Bangladesh reduces average risk by 1:1,000, and moving from social distancing to late suppression reduces average risk by a similar amount.
+It is unclear whether it is appropriate to extrapolate the VSL, estimated from small increases in relative mortality risk, to the much larger increases in mortality risk from COVID-19.
 
 \section{Differences in the Costs of Interventions in Rich and Poor Countries}
 
-Beyond the much smaller benefits of COVID-19 mitigation in poorer countries, workers in such countries are also more vulnerable to the disruption of the economy. They are more likely to rely on a daily cash wage, their work is hands-on and cannot be done while social distancing. Figure \ref{fig:vsl-employment-income} shows the distribution of the percentage of workers either self- or informally-employed. Such workers do not always appear in government and bureaucratic records. So even if a social insurance policy were implemented in these countries, it is uncertain how quickly such people could be located, if at all, to deliver relief benefits to them.
+
+Underpinning the relatively modest benefit estimates from mitigation and suppression policies in poorer countries are three critical factors. First, in poor countries there are fewer old people to who can benefit from targeted distancing. Further, the elderly often reside with younger family members, so contact rates can only be reduced within limits. Second, the relatively low hospital and ICU capacity at baseline in poorer countries means that flattening the mortality curve is unlikely to prevent hospitals from being overwhelmed. Third, the opportunity cost of social distancing is larger in poorer countries, and the VSL is therefore lower. Simply put, rich people can more easily meet their basic needs while social distancing, while a poor person may need to prioritize income-generating opportunities to put food on their family's table.
+
+Beyond the much smaller benefits of COVID-19 mitigation in poorer countries, workers in such countries are also more vulnerable to the disruption of the economy. They are more likely to rely on a daily cash wage, their work is hands-on and cannot be done while social distancing. Figure \ref{fig:employment} shows the distribution of the percentage of workers either self- or informally-employed. Such workers do not always appear in government and bureaucratic records. So even if a social insurance policy were implemented in these countries, it is uncertain how quickly such people could be located, if at all, to deliver relief benefits to them.
+
+\begin{figure}
+\centering
+\caption{Distribution of self- or informally employed workforce by income group}
+\includegraphics[width = .9\textwidth, keepaspectratio]{../fig/vulnerable-employment}
+\label{fig:employment}
+\end{figure}
 
 The social distancing and suppression interventions pioneered in Wuhan, China, and now in place throughout Europe and parts of the United States, rely on government support systems. Many workers throughout Europe still receive their salaries, and U.S.\ taxpayers will receive a stimulus check. By contrast, efforts by the Indian government to impose a lock-down appear to have had significant negative consequences for the most vulnerable members of its population. Interviews with workers from the informal sector tell a story of impending poverty, evictions, and hunger, as their incomes and work opportunities have been curtailed. Migrant laborers in India's largest cities, now without access to employment, are without food or shelter. Many are in the process of literally walking back to their homes, with deaths along the journey already being reported.\footnote{
   See: \textcite{abihabib2020b,abihabib2020a,bbc2020,tewari2020}. \textcite{abihabib2020a} quote one migrant laborer saying: ``You fear the disease, living on the streets. But I fear hunger more, not corona.'' Another migrant construction worker is quoted saying ``I earn 600 rupees every day and I have five people to feed. We will run out of food in a few days. I know the risk of coronavirus, but I can't see my children hungry" \parencite{bbc2020}.}
@@ -139,62 +263,80 @@ The social distancing policies implemented in European countries and the United 
 
 \clearpage
 
+\appendix
 
-\begin{figure}[htbp!]
-  \centering
-  \caption{What is mortality risk from COVID-19?}
-  \includegraphics[width = .48\textwidth, keepaspectratio]{fig/mortality_risk}
-    \includegraphics[width = .48\textwidth, keepaspectratio]{fig/age-dist}
-  \label{fig:perc-mortality}
-\end{figure}
+\section{Robustness checks}
 
+\subsection{Alternative estimates of the VSL}
+\label{sec:alt-vsl}
 
-\begin{figure}[htbp!]
-  \centering
-  \caption{What is the total VSL lost for each country?}
-  \includegraphics[width = \textwidth, height = 4in, keepaspectratio]{fig/vsl-levels}
-  \label{fig:vsl-levels}
-\end{figure}
-
-
-\begin{figure}[htbp!]
-  \centering
-  \caption{What is the relative VSL lost for each country?}
-  \includegraphics[width = \textwidth, height=4.5in, keepaspectratio]{fig/vsl-gdp-a}
-  \includegraphics[width = \textwidth, height=4.5in, keepaspectratio]{fig/vsl-gdp-b}
-  \label{fig:vsl-gdp}
-\end{figure}
-
-\begin{table}
-\caption{\label{tab:marginal-value-intervention}Marginal Value of COVID-19 Interventions Relative to Unmitigated Scenario (total VSL/GDP)}
-\centering
-\begin{tabular}[t]{lrrrrrrrr}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{3}{c}{Upper Income} & \multicolumn{2}{c}{Upper-Middle Income} & \multicolumn{3}{c}{Lower-Middle Income} \\
-\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){5-6} \cmidrule(l{3pt}r{3pt}){7-9}
-Strategy & Japan & UK & US & Brazil & Indonesia & S. Africa & Bangladesh & Nigeria\\
-\midrule
-Unmitigated & -- & -- & -- & -- & -- & -- & -- & --\\
-Social distancing & 100 & 76 & 59 & 46 & 22 & 20 & 14 & 12\\
-Social distancing+ & 21 & 16 & 13 & 9 & 6 & 6 & 4 & 3\\
-Late suppression & 42 & 31 & 29 & 24 & 18 & 10 & 15 & 8\\
-Early suppression & 15 & 26 & 18 & 15 & 16 & 21 & 11 & 20\\
-\bottomrule
-\end{tabular}
-\end{table}
+We re-estimate the relative value of lockdowns and social distancing interventions using the VSL for low- and middle-income countries provided in \textcite{robinson2019}, which uses a higher income elasticity for mortality risk valuation.\footnote{\textcite{robinson2019} use an income elasticity of 1.5, while \textcite{viscusi2017} use an elasticity of 1.} In Figure \ref{fig:vsl-gdp-alt} we show estimates of the relative VSL lost for each country under each intervention. The shaded points represent estimates using the VSL from \textcite{robinson2019}, the triangles represent estimates from our primary analysis using the estimates from \textcite{viscusi2017}. In Botswana, India, and Indonesia the relative value of intervention increases; in Bangladesh and Nigeria the relative value falls. 
 
 
 \begin{figure}[htbp!]
 \centering
-\label{fig:vsl-employment-income}
-\caption{Estimated Value of COVID-19 Intervention by Income Group}
-\includegraphics[width = .48\textwidth, keepaspectratio]{fig/vsl-income-block}
-\includegraphics[width = .48\textwidth, keepaspectratio]{fig/vulnerable-employment}
+\caption{Alternative VSL}
+\includegraphics[width = \textwidth, keepaspectratio]{../fig/vsl-gdp-alt}
+\label{fig:vsl-gdp-alt}
+\end{figure}
+
+We show the difference between the relative value of each policy between our primary specification and using the VSL estimates in \textcite{robinson2019} for middle- and low-income countries in Figure \ref{fig:vsl-diff-alt}. On average our preferred specification estimates the relative value of interventions to be 13\% higher than if we used the alternative VSL estimates.   
+
+\begin{figure}[htbp!]
+\centering
+\caption{Difference in Relative Value of Interventions Using Preferred and Alternative VSL Estimates}
+\includegraphics[width = \textwidth, keepaspectratio]{../fig/vsl-diff-alt}
+\label{fig:vsl-diff-alt}
 \end{figure}
 
 
+\begin{figure}[htbp!]
+\centering
+\caption{Difference in VSL estimates for low- and middle-income countries}
+\includegraphics[width = \textwidth, keepaspectratio]{../fig/vsl-comparison}
+\label{fig:vsl-comparison}
+\end{figure}
+
+\newpage
+\subsection{Alternative excess mortality demand parameters}
+\label{sec:alt-mortality}
+
+The epidemiological model distinguishes between COVID-19 cases that are severe\textemdash requiring hospitalization\textemdash and those that are critical\textemdash requiring intensive care. An open question is the likelihood of death for people who require but cannot access hospital or ICU care. In our primary specification we set the age-specific excess mortality parameter to be 100\% that of people receiving hospital care, up to a mortality rate of 90\%. For example, where the likelihood of a severe cases leading to death is 1.3\% for a patient ages 0 to 39, we set the probability of death to 2.6\% for patients in this same range that cannot access a hospital bed. Similarly a hospitalized patient age 80 and above dies 58\% of the time, and without a hospital bed they die 90\% of the time in our preferred specification \parencite{verity2020,squire}. 
+
+As there is presently no effective treatment for COVID-19, much of what is provided to patients in hospitals is considered supportive care. Supplemental oxygen provides relief to patients, but it is unclear whether it leads to a higher survival rate. Of course, if COVID-19 leads to other complications, hospitals are effective at treating those, which can dramatically reduce mortality.
+
+We re-estimate mortality in our model across the same five scenarios using alternative excess mortality rates for severe non-hospitalized cases of four, six, and ten times that of hospitalized cases. We show these excess mortality rates by age group relative to the baseline rate of hospitalized severe cases (x1) in Figure \ref{fig:change-mortality-age}. The relative value of social distancing in each scenario by excess mortality parameter is shown for a set of countries in Figure \ref{fig:value-mortality-diff}. The value of social distancing increases in the likelihood of death without hospital care. The peak of COVID-19 becomes proportionally more deadly when a patient requires but cannot access a hospital bed, increasing the value of ``flattening the curve.'' Figure \ref{fig:change-mortality-income_group} shows the distribution of the relative value of social distancing by income group, suppression strategy, and excess mortality parameter. Our estimate of the relative value of social distancing is the most sensitive to this parameter in countries that are high and lower middle income. In these countries the efficacy of hospital treatment, or the lack thereof, is a hugely important factor on which to condition the implementation of social distancing policies.
 
 
+
+\begin{figure}[htbp!]
+\centering
+\caption{Alternative Parameters for Excess Mortality Rates by Age}
+\includegraphics[width = \textwidth, keepaspectratio]{../fig/change-mortality-age}
+\label{fig:change-mortality-age}
+\end{figure}
+
+
+\begin{figure}[htbp!]
+\centering
+\caption{Change in Relative Value of VSL by Excess Mortality Measures}
+\includegraphics[width = \textwidth, keepaspectratio]{../fig/value-mortality-diff}
+\label{fig:value-mortality-diff}
+\end{figure}
+
+\begin{figure}[htbp!]
+\centering
+\caption{Relative Value of Social Distancing by Income Group and Excess Mortality Parameter}
+\includegraphics[width = \textwidth, keepaspectratio]{../fig/change-mortality-income_group}
+\label{fig:change-mortality-income_group}
+\end{figure}
+
+%\begin{figure}[htbp!]
+%\centering
+%\caption{Population distribution of all countries}
+%\includegraphics[width = \textwidth, keepaspectratio]{../fig/population-distribution-all}
+%\label{fig:pop-dist-all}
+%\end{figure}
 
 
 \clearpage

@@ -7,6 +7,7 @@ library(dplyr)
 indicators <- c("NY.GDP.MKTP.CD",
                 "NY.GNP.MKTP.CD",
                 "NY.GNP.PCAP.CD",
+              #  "SP.POP.TOTL",       # Total population
                 "SP.POP.65UP.TO.ZS", # Population ages 65 and above (% of total population)
                 "SL.EMP.SELF.ZS",    # Self-employed, total (% of total employment) (modeled ILO estimate)
                 "SL.EMP.VULN.ZS",    # Vulnerable Employment, Total (% Of Total Employment) (Modeled ILO Estimate)
@@ -31,7 +32,7 @@ wb_data <- purrr::map_dfr(indicators,
          vulnerable_employment = SL.EMP.VULN.ZS,
          tax_gdp = GC.TAX.TOTL.GD.ZS,
          tax_inc = GC.TAX.YPKG.ZS,
-         life_expectancy = SP.DYN.LE00.IN,
+         life_expectancy_birth = SP.DYN.LE00.IN,
          hospital_beds = SH.MED.BEDS.ZS,
          doctors = SH.MED.PHYS.ZS) %>%
   # Income classification: https://blogs.worldbank.org/opendata/new-country-classifications-income-level-2019-2020

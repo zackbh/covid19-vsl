@@ -84,7 +84,7 @@ mortality_risk <- df %>% dplyr::filter(country %in% cc) %>%
   scale_y_continuous(breaks = scales::pretty_breaks(n=5), labels = scales::percent_format(), position = "left") +
   scale_color_hue() +
   labs(#title = "How does COVID-19 mortality vary?",
-    y = "Percent population lost") +
+    y = "Percent mortality") +
   theme_minimal() +
   theme(legend.position = "none", axis.title.x = element_blank())
 

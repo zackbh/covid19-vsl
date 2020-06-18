@@ -1,5 +1,7 @@
-# Figure out trigger points
-# Compare SQUIRE vs Initial
+# When to implement policy triggered after X deaths/population? ----
+## Useful for matching squire to initial paper
+## NB: No longer used in our paper
+
 library(squire)
 library(parallel)
   numCores <- detectCores()-2
@@ -18,10 +20,6 @@ df <- readRDS(here::here("data/suppression-triggers.RDS")) %>%
                              country == "Syrian Arab Republic" ~ "Syria",
                              country == "Venezuela (Bolivarian Republic of)" ~ "Venezuela",
                              TRUE ~ country ))
-
-
-
-
 
 triggers <- left_join(df, outcome, by =  c("country", "strategy"))
 

@@ -1,3 +1,4 @@
+###############################################################################
 # Read in mortality by age data ----
 library(dplyr)
 library(readxl)
@@ -12,11 +13,14 @@ mortality_predictions <- readxl::read_excel(here::here("data/raw-data/Global_unm
                               Strategy == "Social distancing whole population" ~ "Social distancing",
                               Strategy == "Enhanced social distancing of elderly" ~ "Social distancing+"),
          strategy = factor(strategy,
-                           levels = c("Unmitigated",
-                                      "Social distancing", "Social distancing+"),
+                           levels = c("Unmitigated", "Social distancing", "Social distancing+"),
                            ordered = T))
 
 
+
+# Assumptions: -----
+# Take mid-point for ages 0-5 => 2.5
+# Assume someone above life expectancy will live at least 1 more year
 
 df <- mortality_predictions %>%
   mutate(years_lost = ((life_expectancy - 2.5) * deaths_0_5) +
@@ -36,7 +40,7 @@ df <- mortality_predictions %>%
                       (max(1, (life_expectancy - 72.5), na.rm = T) * deaths_70_75) +
                       (max(1, (life_expectancy - 77.5), na.rm = T) * deaths_75_80) +
                       (max(1, (life_expectancy - 80), na.rm = T) * deaths_80_200)) %>%
-   mutate(years_lost = years_lost * 1e3,
+   mutate(years_lost = years_lost * 1e3, # Scale to population
           vsl_year = (vsl*1e6)/life_expectancy,
           value_years = years_lost * vsl_year,
           value_years_gdp = (value_years/gdp)) 

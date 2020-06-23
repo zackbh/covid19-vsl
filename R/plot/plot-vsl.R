@@ -1,4 +1,8 @@
+################################################################################
 # Plot VSL ----
+## Differing measures between Masterman and Viscusi and Robinson et al.
+
+################################################################################
 # Load libraries ----
 library(dplyr)
 library(ggplot2)
@@ -130,17 +134,21 @@ cc_alt <- c("Indonesia", "Mexico", "India", "Bangladesh", "South Africa",
             "Nigeria", "Botswana", "Pakistan", "Nepal")
 
 df %>% filter(country %in% cc_alt) %>%
-  ggplot(., aes(x = strategy, y = value_deaths/gdp, color = country, group = country, label = country)) +
-  geom_point(shape = 2, size = .9, alpha = .35) +
-  geom_line(alpha = .35) +
-  geom_point(aes(y = value_deaths_extrapolated/gdp), shape = 19) +
-  geom_line(aes(y = value_deaths_extrapolated/gdp), alpha = .75) +
+select(country, strategy, value_deaths, value_deaths_extrapolated, gdp) %>%
+tidyr::pivot_longer(cols = c(value_deaths, value_deaths_extrapolated), names_to = "vsl") %>%
+mutate(alpha_val = I(ifelse(vsl == "value_deaths_extrapolated", 1.0, .35))) %>%
+  ggplot(., aes(x = strategy, y = value/gdp,
+    color = vsl, alpha = alpha_val, group = vsl)) +
+  geom_point(size = .9) +
+  geom_line() +
   facet_wrap(~country) +
   scale_x_discrete(guide = guide_axis(n.dodge = 1)) +
   scale_y_continuous(labels = scales::percent_format()) +
+  scale_color_hue(labels = c("Masterman and Viscusi 2017", "Robinson et al. 2019")) +
   labs(y = "VSL Lost/GDP") +
   theme_minimal() +
-  theme(legend.position = "none", axis.title.x = element_blank(),
+  theme(legend.position = "bottom", legend.title = element_blank(),
+        axis.title.x = element_blank(),
         axis.text.x = element_text(size = 7, angle = 45, hjust = 1))
 
 ggsave(filename =  here::here("fig/vsl-gdp-alt.pdf"),  width = 5, height = 6)

@@ -41,10 +41,13 @@ df %>% filter(!is.na(vulnerable_employment)) %>%
   scale_x_continuous(labels = scales::percent_format()) +
   scale_y_continuous(position = "left") +
   scale_fill_hue() +
-  labs(title = "",
+  labs(title = "Figure 12: Distribution of self- or informally employed workforce by income group",
+       caption = stringr::str_wrap("Estimated fraction of workforce in each country that is either self-employed or employed in the informal sector. The fraction of the workforce in the formal sector increases with income level.", 100),
        y = "Number of countries", x = "Percent workforce self- or informally-employed") +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none", plot.caption = element_text(size = 7))
+
+ggsave(here::here("fig/fig12-vulnerable-employment.eps"), device = cairo_ps, width = 7, height = 7)
 
 ggsave(here::here("fig/vulnerable-employment.pdf"), width = 5, height = 5, dpi = 1200)
 ggsave(here::here("fig/vulnerable-employment.png"), width = 6, height = 6, dpi = 1200)
@@ -82,15 +85,20 @@ df_age %>%
   mutate(frac_pop = n/total_pop) %>%
   ggplot(., aes(x = age_group, y = frac_pop, color = income_group)) +
   geom_point(alpha = .3, shape = 19) +
-  stat_smooth(aes(group = income_group), se = F) +
+  stat_smooth(aes(group = income_group), method = "loess", se = F) +
   #geom_label(aes(x="30-44", y=.03, label="Low income countries", color="Low income"), show.legend=F) +
   #geom_label(aes(x="30-44", y=.1, label="High income countries", color="High income"), show.legend=F) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_x_discrete(breaks = levels(df_age$age_group)[c(TRUE, FALSE)], guide = guide_axis(n.dodge = 1)) +
   scale_color_hue() +
-  labs(x = "Age Group", y = "Percent of Population") +
+  labs(title = "Figure 4: Population distribution of high and low income countries",
+       caption = stringr::str_wrap("Fraction of the population in high and low income countries within each age range. Each point represents the fraction of the population in that age range for one country, with a smoothed line showing averages for countries that are classified as high- or low-income",
+                                   width = 120),
+       x = "Age Group", y = "Percent of Population") +
   theme_minimal() +
-  theme(legend.position = c(.8,.6), legend.title = element_blank())
+  theme(legend.position = c(.8,.6), legend.title = element_blank(), plot.caption = element_text(size = 7))
+
+ggsave(here::here("fig/fig4-population-distribution-hilow.eps"), device = cairo_ps, width = 6, height = 6)
 
 ggplot2::ggsave(here::here("fig/population-distribution-hilow.pdf"),
                 device = "pdf", width = 8, height = 8)
@@ -169,11 +177,15 @@ ggplot(life_exp, aes(x = age_group, y = life_expectancy, color = income_group, f
   scale_y_continuous(breaks = scales::pretty_breaks(n = 6)) +
   scale_color_hue() +
   scale_fill_hue() +
-  labs(y = "Expected years remaining", x = "Age group") +
+  labs(title = "Figure 9: Population Averaged Life Expectancy by Income Group Classification",
+       caption = stringr::str_wrap("Population weighted average life expectancy at each age by World Bank income classification. Working ages for VSLY are considered between the ages of 20 and 60, shaded in grey. Expected years remaining is higher in higher income countries at all ages, although the difference narrows for the elderly.", 100),
+    y = "Expected years remaining", x = "Age group") +
   theme_minimal() +
-  theme(legend.position = "none", axis.text.x = element_text(size = 8))
+  theme(legend.position = "none", axis.text.x = element_text(size = 8),
+        plot.caption = element_text(size=7))
   
-  ggsave(here::here("fig/life-expectancy.pdf"), device = "pdf", width = 6, height = 5, dpi = 1200)
+ggsave(here::here("fig/fig9-life-expectancy.eps"), device = cairo_ps, width = 6, height = 6)
+ggsave(here::here("fig/life-expectancy.pdf"), device = "pdf", width = 6, height = 5, dpi = 1200)
 
 
 
@@ -246,9 +258,6 @@ fies <- merge(fies, df, by = c("country_code" = "iso3c"))
 
 
 
-
-
-foo <- df %>% group_by(Country) %>% summarize(avg_food_insecurity = mean(avg_food_insecurity, na.rm = T), income_block = unique(income_block)) %>% filter(!is.na(income_block) & !is.na(avg_food_insecurity)) 
 
 
 

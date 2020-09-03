@@ -2,7 +2,8 @@
 # Load libraries ----
 library(dplyr)
 library(ggplot2)
-library(prismatic)
+  library(patchwork)
+  library(prismatic)
 options(knitr.kable.NA = "--")
 
 ###############################################################################
@@ -23,7 +24,7 @@ c2 <- c("United States", "South Africa", "Nigeria",
 # VSLY estimates ----- ########################################################
 
 
-df_age %>% filter(country %in% c1) %>%
+vsly_a <- df_age %>% filter(country %in% c1) %>%
   ggplot(., aes(x = strategy, y = value_years/gdp, color = country, group = country, label = country)) +
   geom_point(size = 2, shape = 19) +
   geom_line(alpha = .75) +
@@ -35,22 +36,29 @@ df_age %>% filter(country %in% c1) %>%
   theme_minimal() +
   theme(legend.position = "none", axis.title.x = element_blank())
 
-ggsave(here::here("fig/vsly-gdp-a.pdf"), device = "pdf", width = 5, height = 6)
-
-df_age %>% filter(country %in% c2) %>%
+vsly_b <- df_age %>% filter(country %in% c2) %>%
   ggplot(., aes(x = strategy, y = value_years/gdp, color = country, group = country, label = country)) +
   geom_point(size = 2, shape = 19) +
   geom_line(alpha = .75) +
   ggrepel::geom_label_repel(data = filter(df_age, country %in% c2 & strategy == "Unmitigated"),
                             force = 3) +
   scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
-  scale_y_continuous(breaks = c(.2,.4,.6,.8,1),limits = c(.2,1), labels = scales::percent_format(), position = "left") +
+  scale_y_continuous(breaks = c(.2,.4,.6,.8,1),limits = c(.2,1), labels = scales::percent_format(), position = "right") +
   labs(y = "VSLY Lost/GDP") +
   theme_minimal() +
   theme(legend.position = "none", axis.title.x = element_blank())
 
+ggsave(plot = vsly_a, filename = here::here("fig/vsly-gdp-a.pdf"), device = "pdf", width = 5, height = 6)
+ggsave(plot = vsly_b, filename = here::here("fig/vsly-gdp-b.pdf"), device = "pdf", width = 5, height = 6)
 
-ggsave(here::here("fig/vsly-gdp-b.pdf"), device = "pdf", width = 5, height = 6)
+
+vsly_a + vsly_b +
+  plot_annotation(title = "Figure 10: What is the value of social distancing for each country?",
+                  caption = stringr::str_wrap("Point estimates of the total VSLY of predicted mortality in each country over that country's GDP in each scenario. A value of 100% represents a loss equal to 100% of that country's yearly GDP", 120),
+                  theme = theme(plot.caption = element_text(size = 7), axis.text.x = element_text(size = 7)))
+ggsave(here::here("fig/fig10-vsly-gdp.eps"), width = 8, height = 8, device = cairo_ps)
+
+
 
 # Difference from VSL ----
 
@@ -86,11 +94,13 @@ ggplot(income_bloc, aes(x = strategy, y = total_losses, color = income_block, gr
   scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(labels = scales::percent_format()) +
   scale_color_hue() + 
-  labs(y = "Total VSLY Lost/Total GDP") +
+  labs(title = "Figure 11: VSLY by Income Group",
+       caption = stringr::str_wrap("Total VSLY over GDP in each income group. A value of 100% indicates a welfare loss equal to 100% of that income group's yearly GDP", 100),
+      y = "Total VSLY Lost/Total GDP") +
   theme_minimal() +
-  theme(legend.position = "none", axis.title.x = element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank(), plot.caption = element_text(size=7))
 
-
+ggsave(here::here("fig/fig11-vsly-income-group.eps"), device = cairo_ps, height = 6, width = 6)
 ggsave(here::here("fig/vsly-income-group.pdf"), device = "pdf", height = 4.5, width = 4.5)
 
 ## Relative to VSL

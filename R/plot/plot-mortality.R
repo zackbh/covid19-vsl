@@ -50,11 +50,15 @@ ifr %>%
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   scale_x_discrete(breaks = levels(ifr$age_group)[c(TRUE, FALSE)], guide = guide_axis(n.dodge = 2)) +
   scale_color_hue() +
-  labs(x = "Age Group") +
+  labs(title = "Figure 3: Estimated Risk of COVID-19 by Age Group",
+       caption = stringr::str_wrap("Estimated risk of COVID-19 hospitalization and conditional mortality as given in Verity et al. (2020). The risk of hospitalization climbs dramatically with age, and cases requiring hospitalization are assigned a separate mortality likelihood based on whether or not they require critical care.", 120),
+       x = "Age Group") +
   theme_minimal() +
   theme(legend.position = "none", axis.title.y = element_blank(),
-        axis.text.x = element_text(size = 8))
+        axis.text.x = element_text(size = 8), plot.caption = element_text(size = 7))
 
+
+ggsave(here::here("fig/fig3-ifr.eps"), device = cairo_ps, width = 6, height = 6)
 ggplot2::ggsave(here::here("fig/ifr.pdf"),
                 device = "pdf", width = 8, height = 6)
 
@@ -83,10 +87,14 @@ mortality_risk <- df %>% dplyr::filter(country %in% cc) %>%
   scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(breaks = scales::pretty_breaks(n=5), labels = scales::percent_format(), position = "left") +
   scale_color_hue() +
-  labs(#title = "How does COVID-19 mortality vary?",
-    y = "Percent mortality") +
+  labs(title = "Figure 1: What is mortality risk from COVID-19 by country?",
+       caption = stringr::str_wrap("Point estimates of COVID-19 population mortality in each country from the squire model by increasing levels of intervention.",
+                                   width = 80),
+       y = "Percent mortality") +
   theme_minimal() +
-  theme(legend.position = "none", axis.title.x = element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank(), plot.caption = element_text(size = 7))
+
+ggsave(here::here("fig/fig1-mortality-risk.eps"), device = cairo_ps, width = 6, height = 6, plot = mortality_risk)
 
 ggplot2::ggsave(filename = here::here("fig/mortality-risk.pdf"),
                 plot = mortality_risk, height = 5, width = 6, dpi = 1200)
@@ -133,10 +141,13 @@ ggplot(inc_block, aes(x = strategy, y = percent_mortality, color = income_group,
   scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(labels = scales::percent_format()) +
   scale_color_hue() +
-  labs(y = "Percent population lost") +
+  labs(title = "Figure 2: Mortality Risk by Income Group and Intervention",
+       caption = stringr::str_wrap("Point estimates of total COVID-19 population mortality in each World Bank income group from the squire model by increasing levels of intervention.", width = 80),
+       y = "Percent mortality") +
   theme_minimal() +
-  theme(legend.position = "none", axis.title.x = element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank(), plot.caption = element_text(size = 7))
 
+ggsave(here::here("fig/fig2-deaths-inc-bloc.eps"), device = cairo_ps, height = 7, width = 7)
 ggplot2::ggsave(here::here("fig/deaths-inc-bloc.pdf"), height = 5, width = 6, dpi = 1200)
 ggplot2::ggsave(here::here("fig/deaths-inc-bloc.png"), height = 6, width = 6, dpi = 1200)  
 

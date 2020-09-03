@@ -58,14 +58,15 @@ df %>% filter(country %in% cc) %>%
                             nudge_y = 1000) +
   scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(labels = scales::dollar_format()) +
-  labs(#title = "How does COVID-19 mortality vary?",
-    y = "Total VSL Lost (billion USD)") +
+  labs(title = "Figure 6: What is the estimated VSL lost for each country?",
+       caption = stringr::str_wrap("Point estimates fo the VSL lost under each mitigation scenario among a set of countries in billions of US dollars. The magnitude of the loss in the U.S. reflects the high level of mortality as well as the high VSL.", 120),
+       y = "Total VSL Lost (billion USD)") +
   theme_minimal() +
-  theme(legend.position = "none", axis.title.x = element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank(), plot.caption = element_text(size = 7))
 
 ggsave(here::here("fig/vsl-levels.pdf"), width = 5, height = 5, dpi = 1200)
-ggplot2::ggsave(filename = here::here("fig/vsl-levels.png"),
-                height = 5.625, width = 10, dpi = 900)
+ggsave(here::here("fig/vsl-levels.png"), height = 5.625, width = 10, dpi = 900)
+ggsave(here::here("fig/fig6-vsl-levels.eps"), width = 6, height = 6, dpi = 1200, device = cairo_ps)
 
 ###############################################################################
 # As fraction of GDP ----
@@ -82,7 +83,7 @@ vsl_gdp_a <- df %>% filter(country %in% c1) %>%
   scale_y_continuous(breaks = c(.5,1,1.5,2, 2.5), labels = scales::percent_format(), limits = c(.4,2.6)) +
   labs(y = "VSL Lost/GDP") +
   theme_minimal() +
-  theme(legend.position = "none", axis.title.x = element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank(), axis.text.x = element_text(size = 7))
 
 vsl_gdp_b <- df %>% filter(country %in% c2) %>%
   ggplot(., aes(x = strategy, y = value_deaths/gdp, color = country, group = country, label = country)) +
@@ -91,10 +92,11 @@ vsl_gdp_b <- df %>% filter(country %in% c2) %>%
   ggrepel::geom_label_repel(data = filter(df, country %in% c2 & strategy == "Unmitigated"),
                             force = 3) +
   scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
-  scale_y_continuous(breaks = c(.5,1,1.5,2, 2.5), labels = scales::percent_format(), limits = c(.4,2.6), position = "left") +
+  scale_y_continuous(breaks = c(.5,1,1.5,2, 2.5), labels = scales::percent_format(), limits = c(.4,2.6), 
+                     position = "right") +
   labs(y = "VSL Lost/GDP") +
   theme_minimal() +
-  theme(legend.position = "none", axis.title.x = element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank(), axis.text.x = element_text(size = 7))
 
 
 ggsave(filename =  here::here("fig/vsl-gdp-a.pdf"),  plot = vsl_gdp_a, width = 5, height = 6)
@@ -104,6 +106,13 @@ ggplot2::ggsave(filename = here::here("fig/vsl-gdp-a.png"), plot = vsl_gdp_a,
 ggsave(filename = here::here("fig/vsl-gdp-b.pdf"), plot = vsl_gdp_b, width = 5, height = 6)
 ggplot2::ggsave(filename = here::here("fig/vsl-gdp-b.png"), plot = vsl_gdp_b,
                 height = 5.625, width = 10, dpi = 900)
+
+vsl_gdp_a + vsl_gdp_b +
+  plot_annotation(title = "Figure 7: What is the relative GDP lost in each country?",
+                  caption = stringr::str_wrap("Point estimates of the total VSL of predicted mortality in each country in each scenario over that country's GDP. A value of 100% represents a loss equal to 100% of that country's yearly GDP", 100),
+                  theme = theme(plot.caption = element_text(size = 7)))
+ggsave(here::here("fig/fig7-vsl-gdp.eps"), width = 6, height = 6, device = cairo_ps)
+
 
 # VSL by income bloc ---
 
@@ -118,12 +127,16 @@ ggplot(income_bloc, aes(x = strategy, y = losses, color = income_group, group = 
   scale_x_discrete(guide = guide_axis(n.dodge = 2)) +
   scale_y_continuous(labels = scales::percent_format()) +
   scale_color_hue() + 
-  labs(y = "VSL Lost/GDP") +
+  labs(title = "Figure 8: Estimated Value of COVID-19 Intervention by Income Group",
+       caption = stringr::str_wrap("Point estimates of the total VSL of predicted mortality in each income group in each scenario over income group's total GDP.",
+                                   width = 120),
+    y = "VSL Lost/GDP") +
   theme_minimal() +
-  theme(legend.position = "none", axis.title.x = element_blank())
+  theme(legend.position = "none", axis.title.x = element_blank(), plot.caption = element_text(size = 7))
 
 ggsave(here::here("fig/vsl-income-block.pdf"), width = 5, height = 6, dpi = 1200)
 ggsave(here::here("fig/vsl-income-block.png"), width = 6, height = 6, dpi = 1200)
+ggsave(here::here("fig/fig8-vsl-income-block.eps"), width = 6, height = 6, device = cairo_ps)
 
 
 
@@ -161,7 +174,7 @@ df %>% filter(!is.na(vsl_extrapolated)) %>%
   geom_vline(xintercept = 0)+
   scale_x_continuous(limits = c(-1, 1), labels = scales::percent_format())+
   scale_y_discrete(guide = guide_axis(n.dodge = 1)) +
-  labs(x = "Difference in relative value of interevention") +
+  labs(x = "Difference in relative value of intervention") +
   theme_minimal() +
   theme(axis.title.y = element_blank(), legend.position = "none")
 
